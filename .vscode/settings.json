@@ -1,20 +1,28 @@
 {
   // デフォルトのフォーマッターをPrettierに設定
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  
+
   // ファイル保存時に自動でフォーマットを実行
   "editor.formatOnSave": true,
   
+
   // 保存時にESLintで修正可能なエラーを自動修正
+  // 保存時に不足しているimportを自動追加（TypeScript/JavaScript）
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": "always",
+    "source.addMissingImports": "always",
+    "source.fixAll.organizeImports": "explicit"
   },
-  
+
+  // importの自動追加・提案で絶対パス（@/...）を優先（tsconfig.jsonのpathsを利用）
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "javascript.preferences.importModuleSpecifier": "non-relative",
+
   // ESLintを適用するファイルタイプを指定
   "eslint.validate": [
-    "javascript",      // .js ファイル
+    "javascript", // .js ファイル
     "javascriptreact", // .jsx ファイル
-    "typescript",      // .ts ファイル
-    "typescriptreact"  // .tsx ファイル
+    "typescript", // .ts ファイル
+    "typescriptreact" // .tsx ファイル
   ]
 }

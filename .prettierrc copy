@@ -8,7 +8,6 @@
   "endOfLine": "lf",
   "arrowParens": "avoid",
   "bracketSpacing": true,
-  "jsxSingleQuote": true
+  "jsxSingleQuote": true,
+  "plugins": ["prettier-plugin-organize-imports"]
 }
-
-
