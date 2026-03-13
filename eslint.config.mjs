@@ -13,10 +13,20 @@ export default [
   // TypeScript + React設定
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
-    
+    settings: {
+      react: {
+        version: 'detect',        // Reactバージョンを自動検出
+        runtime: 'automatic',     // 新しいJSX Transformを使用
+      },
+    },
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
+        // TypeScriptの設定ファイルを明示的に指定
+        project: './tsconfig.json',
+
+        // tsconfig.jsonの基準ディレクトリを指定
+        tsconfigRootDir: process.cwd(),
         ecmaVersion: 2021,
         sourceType: 'module',
         ecmaFeatures: {
