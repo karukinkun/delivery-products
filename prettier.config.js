@@ -18,5 +18,5 @@ module.exports = {
   tabWidth: 2,
   useTabs: false,
   endOfLine: "lf",
-  arrowParens: "avoid",
+  arrowParens: "always",
 };
