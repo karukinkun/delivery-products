@@ -6,8 +6,12 @@ export default function Home() {
   return (
     <div>
       <ul>
-        <li><Link href="/">
-        <div></div></Link></li>
+        <li>
+          <Link href="/">
+            <div>aaa</div>
+            <LoginPage />
+          </Link>
+        </li>
       </ul>
     </div>
   );

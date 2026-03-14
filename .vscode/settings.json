@@ -1,7 +1,12 @@
 {
   // デフォルトのフォーマッターをPrettierに設定
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   // ファイル保存時に自動でフォーマットを実行
   "editor.formatOnSave": true,
   
