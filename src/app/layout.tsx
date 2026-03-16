@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/Header/header';
+import { Spinner } from '@/components/ui/spinner';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -27,6 +28,9 @@ export default function RootLayout({
     <html lang="ja">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Header />
+        <div className="flex justify-center items-center h-screen">
+          <Spinner />
+        </div>
         <main>{children}</main>
       </body>
     </html>
