@@ -1,21 +1,19 @@
 'use client';
 
 import Image from 'next/image';
-import { getProducts, DummyProduct } from '@/lib/api/product';
+import { getProductsApi, Product } from '@/lib/api/product';
 import { Button } from '@/components/ui/button';
 import { FieldGroup, Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
-import loadingStore from '@/lib/store/loadingStore';
 
 type Inputs = {
   keyword: string;
 };
 
 export default function Home() {
-  const { setIsLoading } = loadingStore();
-  const [products, setProducts] = useState<DummyProduct[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const { handleSubmit, control } = useForm<Inputs>({
     defaultValues: {
       keyword: '',
@@ -23,24 +21,14 @@ export default function Home() {
   });
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const response = await getProducts(data.keyword);
+    const response = await getProductsApi(data.keyword);
     setProducts(response);
   };
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const response = await getProducts('red');
-
-        // データをセットする処理
-        setProducts(response);
-      } catch (error) {
-        console.log('エラーが発生しました');
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
+      const response = await getProductsApi();
+      setProducts(response);
     };
 
     // 非同期関数を呼び出す

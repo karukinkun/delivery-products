@@ -10,13 +10,12 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   return (
     <>
       <Header />
+      <main>{children}</main>
 
-      {isLoading ? (
-        <div className="flex justify-center items-center h-screen">
+      {isLoading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
           <Spinner />
         </div>
-      ) : (
-        <main>{children}</main>
       )}
     </>
   );
