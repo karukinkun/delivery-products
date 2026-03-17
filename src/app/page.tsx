@@ -7,12 +7,14 @@ import { FieldGroup, Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
+import loadingStore from '@/lib/store/loadingStore';
 
 type Inputs = {
   keyword: string;
 };
 
 export default function Home() {
+  const { setIsLoading } = loadingStore();
   const [products, setProducts] = useState<DummyProduct[]>([]);
   const { handleSubmit, control } = useForm<Inputs>({
     defaultValues: {
@@ -28,6 +30,7 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const response = await getProducts('red');
 
         // データをセットする処理
@@ -35,6 +38,8 @@ export default function Home() {
       } catch (error) {
         console.log('エラーが発生しました');
         console.log(error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -48,12 +53,6 @@ export default function Home() {
       <div>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex items-center mr-5">
-            {/* <input
-            {...register('example')}
-            type="text"
-            placeholder="検索"
-            className="block min-w-0 grow bg-white py-1.5 pr-3 pl-1 text-base text-gray-900 outline-gray-300 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
-          /> */}
             <FieldGroup className="w-[300px] pr-2">
               <Controller
                 name="keyword"

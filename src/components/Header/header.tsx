@@ -1,5 +1,3 @@
-'use client';
-
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { FieldGroup, Field, FieldLabel } from '@/components/ui/field';
