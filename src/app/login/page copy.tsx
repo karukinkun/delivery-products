@@ -1,9 +1,18 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { FieldGroup, Field } from '@/components/ui/field';
-import { Input } from '@/components/ui/input';
+import { Input as InputType } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { loginApi } from '@/lib/api/auth';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
@@ -21,10 +30,11 @@ export default function LoginPage() {
   });
 
   const onSubmit: SubmitHandler<InputType> = async (data) => {
-    console.log('data');
-    console.log(data);
+    console.log('aa');
 
     const response = await loginApi(data.email, data.password);
+    console.log('response');
+    console.log(response);
   };
 
   return (
@@ -34,14 +44,14 @@ export default function LoginPage() {
           <CardTitle>ログイン</CardTitle>
         </CardHeader>
         <CardContent>
-          <form id="login-form" onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <FieldGroup className="pr-2">
               <Controller
                 name="email"
                 control={control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <Input
+                    <InputType
                       {...field}
                       id="form-rhf-demo-title"
                       aria-invalid={fieldState.invalid}
@@ -56,7 +66,7 @@ export default function LoginPage() {
                 control={control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <Input
+                    <InputType
                       {...field}
                       id="form-rhf-demo-title"
                       aria-invalid={fieldState.invalid}
@@ -66,12 +76,23 @@ export default function LoginPage() {
                 )}
               />
             </FieldGroup>
+
+            {/* <div className="flex flex-col gap-6">
+              <div className="grid gap-2">
+                <Label htmlFor="email">メールアドレス</Label>
+                <Input id="email" type="email" required />
+              </div>
+              <div className="grid gap-2">
+                <div className="flex items-center">
+                  <Label htmlFor="password">パスワード</Label>
+                </div>
+                <Input id="password" type="password" defaultValue={'emilyspass'} required />
+              </div>
+            </div> */}
           </form>
         </CardContent>
         <CardFooter className="flex-col gap-2">
-          <Button type="submit" form="login-form" className="w-full">
-            ログイン
-          </Button>
+          <Button className="w-full">ログイン</Button>
           <a href="#" className="ml-auto inline-block text-sm underline-offset-4 hover:underline">
             パスワードを忘れた方はこちら
           </a>
