@@ -1,10 +1,12 @@
 'use client';
 
+import { TextField } from '@/components/TextField';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { FieldGroup, Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { loginApi } from '@/lib/api/auth';
+import { EyeOffIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
@@ -23,6 +25,7 @@ export default function LoginPage() {
   });
 
   const onSubmit: SubmitHandler<InputType> = async (data) => {
+    console.log(data);
     const res = await loginApi(data.username, data.password);
     localStorage.setItem('accessToken', res.accessToken);
 
@@ -37,36 +40,40 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent>
           <form id="login-form" onSubmit={handleSubmit(onSubmit)}>
-            <FieldGroup className="pr-2">
-              <Controller
-                name="username"
-                control={control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <Input
-                      {...field}
-                      id="form-rhf-demo-title"
-                      aria-invalid={fieldState.invalid}
-                      autoComplete="off"
+            <FieldGroup>
+              <Field>
+                <Controller
+                  name="username"
+                  control={control}
+                  render={({ field, fieldState }) => (
+                    <TextField
+                      field={field}
+                      fieldState={fieldState}
+                      name="username"
+                      label="username"
+                      placeholder="emilys"
                     />
-                  </Field>
-                )}
-              />
-
-              <Controller
-                name="password"
-                control={control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <Input
-                      {...field}
-                      id="form-rhf-demo-title"
-                      aria-invalid={fieldState.invalid}
+                  )}
+                />
+              </Field>
+              <Field>
+                <Controller
+                  name="password"
+                  control={control}
+                  render={({ field, fieldState }) => (
+                    <TextField
+                      field={field}
+                      fieldState={fieldState}
+                      name="password"
+                      placeholder="emilyspass"
                       autoComplete="off"
+                      label="password"
+                      icon={<EyeOffIcon />}
+                      iconAlign="inline-end"
                     />
-                  </Field>
-                )}
-              />
+                  )}
+                />
+              </Field>
             </FieldGroup>
           </form>
         </CardContent>

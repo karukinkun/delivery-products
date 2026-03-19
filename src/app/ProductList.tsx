@@ -3,10 +3,12 @@
 import Image from 'next/image';
 import { getProductsApi, Product } from '@/lib/api/product';
 import { Button } from '@/components/ui/button';
-import { FieldGroup, Field } from '@/components/ui/field';
+import { Field, FieldGroup } from '@/components/ui/field';
 import { Input as InputType } from '@/components/ui/input';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useState } from 'react';
+import { SearchIcon } from 'lucide-react';
+import { TextField } from '@/components/TextField';
 
 type InputType = {
   keyword: string;
@@ -33,25 +35,25 @@ export default function ProductList({ initialProducts }: PropsType) {
       <h1 className="mb-6 text-2xl font-semibold">商品一覧</h1>
       <div>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex items-center mr-5">
-            <FieldGroup className="w-[300px] pr-2">
+          <div>
+            <Field orientation="horizontal">
               <Controller
                 name="keyword"
                 control={control}
                 render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <InputType
-                      {...field}
-                      id="form-rhf-demo-title"
-                      aria-invalid={fieldState.invalid}
-                      placeholder="検索"
-                      autoComplete="off"
-                    />
-                  </Field>
+                  <TextField
+                    name="keyword"
+                    field={field}
+                    fieldState={fieldState}
+                    placeholder="検索"
+                    autoComplete="off"
+                    icon={<SearchIcon />}
+                    iconAlign="inline-end"
+                  />
                 )}
               />
-            </FieldGroup>
-            <Button>検索</Button>
+              <Button>検索</Button>
+            </Field>
           </div>
         </form>
       </div>
