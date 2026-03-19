@@ -5,6 +5,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { FieldGroup, Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { loginApi } from '@/lib/api/auth';
+import { useRouter } from 'next/navigation';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
 type InputType = {
@@ -13,6 +14,7 @@ type InputType = {
 };
 
 export default function LoginPage() {
+  const router = useRouter();
   const { handleSubmit, control } = useForm<InputType>({
     defaultValues: {
       username: 'emilys',
@@ -23,6 +25,8 @@ export default function LoginPage() {
   const onSubmit: SubmitHandler<InputType> = async (data) => {
     const res = await loginApi(data.username, data.password);
     localStorage.setItem('accessToken', res.accessToken);
+
+    router.push('/');
   };
 
   return (
