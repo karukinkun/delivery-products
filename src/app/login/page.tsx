@@ -8,23 +8,21 @@ import { loginApi } from '@/lib/api/auth';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
 type InputType = {
-  email: string;
+  username: string;
   password: string;
 };
 
 export default function LoginPage() {
   const { handleSubmit, control } = useForm<InputType>({
     defaultValues: {
-      email: '',
-      password: '',
+      username: 'emilys',
+      password: 'emilyspass',
     },
   });
 
   const onSubmit: SubmitHandler<InputType> = async (data) => {
-    console.log('data');
-    console.log(data);
-
-    const response = await loginApi(data.email, data.password);
+    const res = await loginApi(data.username, data.password);
+    localStorage.setItem('accessToken', res.accessToken);
   };
 
   return (
@@ -37,7 +35,7 @@ export default function LoginPage() {
           <form id="login-form" onSubmit={handleSubmit(onSubmit)}>
             <FieldGroup className="pr-2">
               <Controller
-                name="email"
+                name="username"
                 control={control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
