@@ -3,10 +3,10 @@
 import { TextField } from '@/components/TextField';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { FieldGroup, Field } from '@/components/ui/field';
-import { Input } from '@/components/ui/input';
+import { Field, FieldGroup } from '@/components/ui/field';
 import { loginApi } from '@/lib/api/auth';
 import { EyeOffIcon } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
@@ -81,7 +81,10 @@ export default function LoginPage() {
           <Button type="submit" form="login-form" className="w-full">
             ログイン
           </Button>
-          <a href="#" className="ml-auto inline-block text-sm underline-offset-4 hover:underline">
+          <Button asChild variant="outline" className="w-full">
+            <Link href="/signup">新規登録はこちら</Link>
+          </Button>
+          <a href="#" className="ml-auto inline-block text-sm underline-offset-4 ">
             パスワードを忘れた方はこちら
           </a>
         </CardFooter>

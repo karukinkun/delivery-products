@@ -9,14 +9,14 @@
   },
   // ファイル保存時に自動でフォーマットを実行
   "editor.formatOnSave": true,
-  
 
   // 保存時にESLintで修正可能なエラーを自動修正
   // 保存時に不足しているimportを自動追加（TypeScript/JavaScript）
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "always",
     "source.addMissingImports": "always",
-    "source.fixAll.organizeImports": "explicit"
+    "source.fixAll.organizeImports": "explicit",
+    "source.organizeImports": "explicit"
   },
 
   // importの自動追加・提案で絶対パス（@/...）を優先（tsconfig.jsonのpathsを利用）

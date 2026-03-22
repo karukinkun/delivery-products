@@ -1,5 +1,5 @@
-import { getProductsApi, Product } from '@/lib/api/product';
 import ProductList from '@/app/ProductList';
+import { getProductsApi } from '@/lib/api/product';
 
 export default async function Home() {
   const products = await getProductsApi();

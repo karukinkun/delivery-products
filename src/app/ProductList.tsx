@@ -1,14 +1,14 @@
 'use client';
 
-import Image from 'next/image';
-import { getProductsApi, Product } from '@/lib/api/product';
-import { Button } from '@/components/ui/button';
-import { Field, FieldGroup } from '@/components/ui/field';
-import { Input as InputType } from '@/components/ui/input';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { useState } from 'react';
-import { SearchIcon } from 'lucide-react';
 import { TextField } from '@/components/TextField';
+import { Button } from '@/components/ui/button';
+import { Field } from '@/components/ui/field';
+import { Input as InputType } from '@/components/ui/input';
+import { getProductsApi, Product } from '@/lib/api/product';
+import { SearchIcon } from 'lucide-react';
+import Image from 'next/image';
+import { useState } from 'react';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
 type InputType = {
   keyword: string;
