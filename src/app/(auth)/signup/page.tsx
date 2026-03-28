@@ -1,5 +1,6 @@
 'use client';
 
+import { schema } from '@/app/(auth)/signup/schema';
 import { RadioField } from '@/components/RadioField';
 import { SelectField } from '@/components/SelectField';
 import { TextField } from '@/components/TextField';
@@ -7,17 +8,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldGroup } from '@/components/ui/field';
 import { dayList, monthList, yearList } from '@/lib/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { z } from 'zod';
 
-type InputType = {
-  firstName: string;
-  lastName: string;
-  gender: string;
-  year: string;
-  month: string;
-  day: string;
-};
+type FormType = z.infer<typeof schema>;
 
 const sexOptions = [
   { label: '男性', value: 'male' },
@@ -25,10 +21,12 @@ const sexOptions = [
 ];
 
 export default function SignInPage() {
-  const { handleSubmit, control } = useForm<InputType>({
+  const { handleSubmit, control } = useForm<FormType>({
+    resolver: zodResolver(schema),
     defaultValues: {
       firstName: '',
       lastName: '',
+      email: '',
       gender: 'male',
       year: '',
       month: '',
@@ -36,7 +34,7 @@ export default function SignInPage() {
     },
   });
 
-  const onSubmit: SubmitHandler<InputType> = async (data) => {
+  const onSubmit: SubmitHandler<FormType> = async (data) => {
     console.log(data);
   };
 
@@ -47,24 +45,9 @@ export default function SignInPage() {
           <CardTitle>新規会員登録</CardTitle>
         </CardHeader>
         <CardContent>
-          <form id="login-form" onSubmit={handleSubmit(onSubmit)}>
+          <form id="login-form" noValidate onSubmit={handleSubmit(onSubmit)}>
             <FieldGroup>
               <div className="grid grid-cols-2 gap-4">
-                <Field>
-                  <Controller
-                    name="firstName"
-                    control={control}
-                    render={({ field, fieldState }) => (
-                      <TextField
-                        field={field}
-                        fieldState={fieldState}
-                        name="firstName"
-                        label="firstName"
-                        placeholder="emilys"
-                      />
-                    )}
-                  />
-                </Field>
                 <Field>
                   <Controller
                     name="lastName"
@@ -74,8 +57,41 @@ export default function SignInPage() {
                         field={field}
                         fieldState={fieldState}
                         name="lastName"
-                        label="lastName"
-                        placeholder="emilys"
+                        label="姓"
+                        placeholder="山田"
+                      />
+                    )}
+                  />
+                </Field>
+                <Field>
+                  <Controller
+                    name="firstName"
+                    control={control}
+                    render={({ field, fieldState }) => (
+                      <TextField
+                        field={field}
+                        fieldState={fieldState}
+                        name="firstName"
+                        label="名"
+                        placeholder="太郎"
+                      />
+                    )}
+                  />
+                </Field>
+              </div>
+              <div className="grid grid-cols-1">
+                <Field>
+                  <Controller
+                    name="email"
+                    control={control}
+                    render={({ field, fieldState }) => (
+                      <TextField
+                        field={field}
+                        fieldState={fieldState}
+                        name="email"
+                        label="メールアドレス"
+                        placeholder="メールアドレス"
+                        type="email"
                       />
                     )}
                   />
@@ -105,8 +121,8 @@ export default function SignInPage() {
                       field={field}
                       fieldState={fieldState}
                       placeholder="年"
-                      selectBoxLabel="生年月日"
                       options={yearList}
+                      selectBoxLabel="生年月日"
                     />
                   )}
                 />
@@ -119,6 +135,7 @@ export default function SignInPage() {
                       fieldState={fieldState}
                       placeholder="月"
                       options={monthList}
+                      isGroupLabel={true}
                     />
                   )}
                 />
@@ -131,6 +148,7 @@ export default function SignInPage() {
                       fieldState={fieldState}
                       placeholder="日"
                       options={dayList}
+                      isGroupLabel={true}
                     />
                   )}
                 />

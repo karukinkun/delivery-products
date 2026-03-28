@@ -1,4 +1,4 @@
-import { Field, FieldError, FieldLabel } from '@/components/ui/field';
+import { Field, FieldError } from '@/components/ui/field';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import type {
@@ -25,7 +25,6 @@ export function RadioField<TFieldValues extends FieldValues, TName extends Path<
 }: Props<TFieldValues, TName>) {
   return (
     <>
-      {radioGrouplabel && <FieldLabel>{radioGrouplabel}</FieldLabel>}
       <RadioGroup
         id={`form-${field.name}`}
         onValueChange={field.onChange}

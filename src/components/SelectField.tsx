@@ -20,17 +20,18 @@ type Props<TFieldValues extends FieldValues, TName extends Path<TFieldValues>> =
   options: { label: string; value: string | number }[];
   placeholder?: string;
   selectBoxLabel?: string;
+  isGroupLabel?: boolean;
 };
 
 export function SelectField<TFieldValues extends FieldValues, TName extends Path<TFieldValues>>(
   props: Props<TFieldValues, TName>,
 ) {
-  const { field, fieldState, options, placeholder, selectBoxLabel } = props;
+  const { field, fieldState, options, placeholder, selectBoxLabel, isGroupLabel } = props;
 
   return (
     <>
-      {selectBoxLabel && <FieldLabel>{selectBoxLabel}</FieldLabel>}
-      <Field data-invalid={fieldState.invalid}>
+      <Field orientation="vertical" className="self-end">
+        {selectBoxLabel && <FieldLabel>{selectBoxLabel}</FieldLabel>}
         <Select name={field.name} value={field.value.toString()} onValueChange={field.onChange}>
           <SelectTrigger
             id={`form-${field.name}`}
@@ -48,8 +49,8 @@ export function SelectField<TFieldValues extends FieldValues, TName extends Path
             ))}
           </SelectContent>
         </Select>
+        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
       </Field>
-      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
     </>
   );
 }

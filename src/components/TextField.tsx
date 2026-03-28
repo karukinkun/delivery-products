@@ -12,6 +12,7 @@ type Props<TFieldValues extends FieldValues, TName extends Path<TFieldValues>> =
   label?: string;
   field: ControllerRenderProps<TFieldValues, TName>;
   fieldState: ControllerFieldState;
+  error?: string;
   type?: 'text' | 'password' | 'email' | 'tel' | 'number' | 'search';
   autoComplete?: string;
   icon?: ReactNode;
@@ -23,6 +24,7 @@ export function TextField<TFieldValues extends FieldValues, TName extends Path<T
   className,
   field,
   fieldState,
+  error,
   type,
   autoComplete,
   label,
@@ -31,6 +33,7 @@ export function TextField<TFieldValues extends FieldValues, TName extends Path<T
   description,
   ...props
 }: Props<TFieldValues, TName>) {
+  console.log(error);
   return (
     <Field data-invalid={fieldState.invalid} className={className}>
       {label && <FieldLabel htmlFor={`form-${field.name}`}>{label}</FieldLabel>}

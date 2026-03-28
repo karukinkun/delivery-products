@@ -10,21 +10,21 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
-type InputType = {
+type FormType = {
   username: string;
   password: string;
 };
 
 export default function LoginPage() {
   const router = useRouter();
-  const { handleSubmit, control } = useForm<InputType>({
+  const { handleSubmit, control } = useForm<FormType>({
     defaultValues: {
       username: 'emilys',
       password: 'emilyspass',
     },
   });
 
-  const onSubmit: SubmitHandler<InputType> = async (data) => {
+  const onSubmit: SubmitHandler<FormType> = async (data) => {
     console.log(data);
     const res = await loginApi(data.username, data.password);
     localStorage.setItem('accessToken', res.accessToken);
