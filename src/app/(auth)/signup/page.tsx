@@ -154,13 +154,15 @@ export default function SignInPage() {
             </FieldGroup>
           </form>
         </CardContent>
-        <CardFooter className="flex-col gap-2">
-          <Button type="submit" form="signup-form" className="w-full">
-            ログイン
-          </Button>
-          <Button asChild className="w-full">
-            <Link href="/signup">新規登録はこちら</Link>
-          </Button>
+        <CardFooter className="flex">
+          <div className="flex gap-2">
+            <Button asChild className="w-full" variant="outline">
+              <Link href="/login">戻る</Link>
+            </Button>
+            <Button type="submit" form="signup-form" className="w-full">
+              会員登録
+            </Button>
+          </div>
         </CardFooter>
       </Card>
     </>
