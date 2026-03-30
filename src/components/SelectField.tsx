@@ -20,13 +20,13 @@ type Props<TFieldValues extends FieldValues, TName extends Path<TFieldValues>> =
   options: { label: string; value: string | number }[];
   placeholder?: string;
   selectBoxLabel?: string;
-  isGroupLabel?: boolean;
+  disabled?: boolean;
 };
 
 export function SelectField<TFieldValues extends FieldValues, TName extends Path<TFieldValues>>(
   props: Props<TFieldValues, TName>,
 ) {
-  const { field, fieldState, options, placeholder, selectBoxLabel, isGroupLabel } = props;
+  const { field, fieldState, options, placeholder, selectBoxLabel, disabled = false } = props;
 
   return (
     <>
@@ -43,7 +43,7 @@ export function SelectField<TFieldValues extends FieldValues, TName extends Path
           <SelectContent position="item-aligned">
             <SelectSeparator />
             {options.map((option) => (
-              <SelectItem key={option.value} value={option.value.toString()}>
+              <SelectItem key={option.value} value={option.value.toString()} disabled={disabled}>
                 {option.label}
               </SelectItem>
             ))}

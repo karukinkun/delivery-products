@@ -1,0 +1,117 @@
+// // UIモック
+vi.mock('@/components/ui/field', () => ({
+  FieldLabel: ({ children, htmlFor }: any) => <label htmlFor={htmlFor}>{children}</label>,
+  FieldError: ({ errors }: any) => <div>{errors?.[0]?.message}</div>,
+}));
+
+vi.mock('@/components/ui/input-group', () => ({
+  InputGroup: ({ children }: any) => <div>{children}</div>,
+  InputGroupInput: (props: any) => <input {...props} />,
+  InputGroupAddon: ({ children }: any) => <div>{children}</div>,
+}));
+
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { ControllerFieldState } from 'react-hook-form';
+import { describe, expect, it, vi } from 'vitest';
+import { TextField } from './TextField';
+// react-hook-formの型を簡易モック
+const createField = (overrides = {}) => ({
+  name: 'test',
+  value: '',
+  error: undefined,
+  onChange: vi.fn(),
+  onBlur: vi.fn(),
+  ref: vi.fn(),
+  ...overrides,
+});
+
+const fieldState: ControllerFieldState = {
+  isValidating: false,
+  invalid: false,
+  isTouched: false,
+  isDirty: false,
+  error: undefined,
+};
+
+const createFieldState = (overrides: Partial<ControllerFieldState> = {}): ControllerFieldState => ({
+  invalid: false,
+  isTouched: false,
+  isDirty: false,
+  isValidating: false,
+  error: undefined,
+  ...overrides,
+});
+
+describe('TextField', () => {
+  // ------------------------------
+  // ① 表示テスト
+  // ------------------------------
+  it('labelが表示される', () => {
+    render(<TextField label="ラベル名" field={createField()} fieldState={createFieldState()} />);
+    expect(screen.getByText('ラベル名')).toBeInTheDocument();
+  });
+
+  it('labelと紐づいたinputタグが表示される', () => {
+    render(<TextField label="ラベル名" field={createField()} fieldState={createFieldState()} />);
+    expect(screen.getByLabelText('ラベル名')).toBeInTheDocument();
+  });
+
+  it('labelが表示されない', () => {
+    render(<TextField field={createField()} fieldState={createFieldState()} />);
+    expect(screen.queryByText('ラベル名')).not.toBeInTheDocument();
+  });
+
+  it('inputが表示される', () => {
+    render(<TextField field={createField()} fieldState={createFieldState()} />);
+
+    expect(screen.getByRole('textbox')).toBeInTheDocument();
+  });
+
+  // ------------------------------
+  // ② 入力テスト
+  // ------------------------------
+  it('入力するとonChangeが呼ばれる', async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+
+    render(<TextField field={createField({ onChange })} fieldState={createFieldState()} />);
+
+    const input = screen.getByRole('textbox');
+
+    await user.type(input, 'テスト');
+
+    expect(onChange).toHaveBeenCalled();
+  });
+
+  it('valueが反映される', () => {
+    render(<TextField field={createField({ value: '初期値' })} fieldState={createFieldState()} />);
+
+    const input = screen.getByRole('textbox');
+
+    expect(input).toHaveValue('初期値');
+  });
+
+  // ------------------------------
+  // ③ エラー表示テスト
+  // ------------------------------
+  it('エラー時にエラーメッセージが表示される', () => {
+    render(
+      <TextField
+        field={createField()}
+        fieldState={createFieldState({
+          invalid: true,
+          error: { message: '必須項目です', type: 'required' },
+        })}
+      />,
+    );
+
+    expect(screen.getByText('必須項目です')).toBeInTheDocument();
+  });
+
+  it('正常時はエラーメッセージが表示されない', () => {
+    render(<TextField field={createField()} fieldState={createFieldState()} />);
+
+    expect(screen.queryByText('必須項目です')).not.toBeInTheDocument();
+  });
+});

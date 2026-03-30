@@ -7,13 +7,13 @@ import { TextField } from '@/components/TextField';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldGroup } from '@/components/ui/field';
+import { SignupFormType } from '@/lib/form/signupForm';
+import { signupFormStore } from '@/lib/store/signupFormStore';
 import { dayList, monthList, yearList } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { z } from 'zod';
-
-type FormType = z.infer<typeof schema>;
 
 const sexOptions = [
   { label: '男性', value: 'male' },
@@ -21,21 +21,22 @@ const sexOptions = [
 ];
 
 export default function SignInPage() {
-  const { handleSubmit, control } = useForm<FormType>({
+  const router = useRouter();
+  const { form, setForm, clearForm } = signupFormStore();
+  const { handleSubmit, control } = useForm<SignupFormType>({
     resolver: zodResolver(schema),
-    defaultValues: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      gender: 'male',
-      year: '',
-      month: '',
-      day: '',
-    },
+    defaultValues: form,
   });
 
-  const onSubmit: SubmitHandler<FormType> = async (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<SignupFormType> = (data) => {
+    setForm(data); // Zustand に保管
+
+    router.push('/signupConfirm');
+  };
+
+  const onClickPageBack = () => {
+    clearForm();
+    router.push('/login');
   };
 
   return (
@@ -45,7 +46,7 @@ export default function SignInPage() {
           <CardTitle>新規会員登録</CardTitle>
         </CardHeader>
         <CardContent>
-          <form id="login-form" noValidate onSubmit={handleSubmit(onSubmit)}>
+          <form id="signup-form" noValidate onSubmit={handleSubmit(onSubmit)}>
             <FieldGroup>
               <div className="grid grid-cols-2 gap-4">
                 <Field>
@@ -105,7 +106,7 @@ export default function SignInPage() {
                     <RadioField
                       field={field}
                       fieldState={fieldState}
-                      radioGrouplabel="性別"
+                      Grouplabel="性別"
                       options={sexOptions}
                     />
                   )}
@@ -135,7 +136,6 @@ export default function SignInPage() {
                       fieldState={fieldState}
                       placeholder="月"
                       options={monthList}
-                      isGroupLabel={true}
                     />
                   )}
                 />
@@ -148,7 +148,6 @@ export default function SignInPage() {
                       fieldState={fieldState}
                       placeholder="日"
                       options={dayList}
-                      isGroupLabel={true}
                     />
                   )}
                 />
@@ -156,16 +155,15 @@ export default function SignInPage() {
             </FieldGroup>
           </form>
         </CardContent>
-        <CardFooter className="flex-col gap-2">
-          <Button type="submit" form="login-form" className="w-full">
-            ログイン
-          </Button>
-          <Button asChild className="w-full">
-            <Link href="/signup">新規登録はこちら</Link>
-          </Button>
-          <a href="#" className="ml-auto inline-block text-sm underline-offset-4 hover:underline">
-            パスワードを忘れた方はこちら
-          </a>
+        <CardFooter className="flex">
+          <div className="flex gap-2">
+            <Button onClick={onClickPageBack} className="w-full" variant="outline">
+              <Link href="/login">戻る</Link>
+            </Button>
+            <Button type="submit" form="signup-form" className="w-full">
+              確認画面へ進む
+            </Button>
+          </div>
         </CardFooter>
       </Card>
     </>

@@ -42,10 +42,10 @@ export default function ProductList({ initialProducts }: PropsType) {
                 render={({ field, fieldState }) => (
                   <TextField
                     name="keyword"
+                    aria-label="検索ワード"
                     field={field}
                     fieldState={fieldState}
                     placeholder="検索"
-                    autoComplete="off"
                     icon={<SearchIcon />}
                     iconAlign="inline-end"
                   />

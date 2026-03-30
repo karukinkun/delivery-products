@@ -1,4 +1,4 @@
-import { Field, FieldError } from '@/components/ui/field';
+import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import type {
@@ -9,7 +9,7 @@ import type {
 } from 'react-hook-form';
 
 type Props<TFieldValues extends FieldValues, TName extends Path<TFieldValues>> = {
-  radioGrouplabel?: string;
+  Grouplabel?: string;
   field: ControllerRenderProps<TFieldValues, TName>;
   fieldState: ControllerFieldState;
   orientation?: 'horizontal' | 'vertical';
@@ -17,7 +17,7 @@ type Props<TFieldValues extends FieldValues, TName extends Path<TFieldValues>> =
 };
 
 export function RadioField<TFieldValues extends FieldValues, TName extends Path<TFieldValues>>({
-  radioGrouplabel,
+  Grouplabel,
   field,
   fieldState,
   orientation,
@@ -25,6 +25,7 @@ export function RadioField<TFieldValues extends FieldValues, TName extends Path<
 }: Props<TFieldValues, TName>) {
   return (
     <>
+      {Grouplabel && <FieldLabel>{Grouplabel}</FieldLabel>}
       <RadioGroup
         id={`form-${field.name}`}
         onValueChange={field.onChange}
