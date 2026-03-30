@@ -1,4 +1,4 @@
-import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
+import { FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
 import { ComponentProps, ReactNode } from 'react';
 import type {
@@ -35,7 +35,7 @@ export function TextField<TFieldValues extends FieldValues, TName extends Path<T
 }: Props<TFieldValues, TName>) {
   console.log(error);
   return (
-    <Field data-invalid={fieldState.invalid} className={className}>
+    <>
       {label && <FieldLabel htmlFor={`form-${field.name}`}>{label}</FieldLabel>}
       <InputGroup>
         <InputGroupInput
@@ -50,6 +50,6 @@ export function TextField<TFieldValues extends FieldValues, TName extends Path<T
       </InputGroup>
       {description && <FieldDescription>{description}</FieldDescription>}
       {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-    </Field>
+    </>
   );
 }

@@ -45,7 +45,7 @@ export default function SignInPage() {
           <CardTitle>新規会員登録</CardTitle>
         </CardHeader>
         <CardContent>
-          <form id="login-form" noValidate onSubmit={handleSubmit(onSubmit)}>
+          <form id="signup-form" noValidate onSubmit={handleSubmit(onSubmit)}>
             <FieldGroup>
               <div className="grid grid-cols-2 gap-4">
                 <Field>
@@ -105,7 +105,7 @@ export default function SignInPage() {
                     <RadioField
                       field={field}
                       fieldState={fieldState}
-                      radioGrouplabel="性別"
+                      Grouplabel="性別"
                       options={sexOptions}
                     />
                   )}
@@ -135,7 +135,6 @@ export default function SignInPage() {
                       fieldState={fieldState}
                       placeholder="月"
                       options={monthList}
-                      isGroupLabel={true}
                     />
                   )}
                 />
@@ -148,7 +147,6 @@ export default function SignInPage() {
                       fieldState={fieldState}
                       placeholder="日"
                       options={dayList}
-                      isGroupLabel={true}
                     />
                   )}
                 />
@@ -157,15 +155,12 @@ export default function SignInPage() {
           </form>
         </CardContent>
         <CardFooter className="flex-col gap-2">
-          <Button type="submit" form="login-form" className="w-full">
+          <Button type="submit" form="signup-form" className="w-full">
             ログイン
           </Button>
           <Button asChild className="w-full">
             <Link href="/signup">新規登録はこちら</Link>
           </Button>
-          <a href="#" className="ml-auto inline-block text-sm underline-offset-4 hover:underline">
-            パスワードを忘れた方はこちら
-          </a>
         </CardFooter>
       </Card>
     </>

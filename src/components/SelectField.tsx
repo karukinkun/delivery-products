@@ -20,13 +20,12 @@ type Props<TFieldValues extends FieldValues, TName extends Path<TFieldValues>> =
   options: { label: string; value: string | number }[];
   placeholder?: string;
   selectBoxLabel?: string;
-  isGroupLabel?: boolean;
 };
 
 export function SelectField<TFieldValues extends FieldValues, TName extends Path<TFieldValues>>(
   props: Props<TFieldValues, TName>,
 ) {
-  const { field, fieldState, options, placeholder, selectBoxLabel, isGroupLabel } = props;
+  const { field, fieldState, options, placeholder, selectBoxLabel } = props;
 
   return (
     <>
