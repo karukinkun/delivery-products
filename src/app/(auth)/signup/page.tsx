@@ -7,13 +7,13 @@ import { TextField } from '@/components/TextField';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldGroup } from '@/components/ui/field';
+import { SignupFormType } from '@/lib/form/signupForm';
+import { signupFormStore } from '@/lib/store/signupFormStore';
 import { dayList, monthList, yearList } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { z } from 'zod';
-
-type FormType = z.infer<typeof schema>;
 
 const sexOptions = [
   { label: '男性', value: 'male' },
@@ -21,21 +21,22 @@ const sexOptions = [
 ];
 
 export default function SignInPage() {
-  const { handleSubmit, control } = useForm<FormType>({
+  const router = useRouter();
+  const { form, setForm, clearForm } = signupFormStore();
+  const { handleSubmit, control } = useForm<SignupFormType>({
     resolver: zodResolver(schema),
-    defaultValues: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      gender: 'male',
-      year: '',
-      month: '',
-      day: '',
-    },
+    defaultValues: form,
   });
 
-  const onSubmit: SubmitHandler<FormType> = async (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<SignupFormType> = (data) => {
+    setForm(data); // Zustand に保管
+
+    router.push('/signupConfirm');
+  };
+
+  const onClickPageBack = () => {
+    clearForm();
+    router.push('/login');
   };
 
   return (
@@ -156,11 +157,11 @@ export default function SignInPage() {
         </CardContent>
         <CardFooter className="flex">
           <div className="flex gap-2">
-            <Button asChild className="w-full" variant="outline">
+            <Button onClick={onClickPageBack} className="w-full" variant="outline">
               <Link href="/login">戻る</Link>
             </Button>
             <Button type="submit" form="signup-form" className="w-full">
-              会員登録
+              確認画面へ進む
             </Button>
           </div>
         </CardFooter>

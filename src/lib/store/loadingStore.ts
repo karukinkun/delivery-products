@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 
-type LoadingStore = {
+type StoreType = {
   isLoading: boolean;
   setIsLoading: (isLoading: boolean) => void;
 };
 
-const loadingStore = create<LoadingStore>((set) => ({
+const loadingStore = create<StoreType>((set) => ({
   isLoading: false,
   setIsLoading: (isLoading: boolean) =>
     set({

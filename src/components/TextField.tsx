@@ -33,7 +33,6 @@ export function TextField<TFieldValues extends FieldValues, TName extends Path<T
   description,
   ...props
 }: Props<TFieldValues, TName>) {
-  console.log(error);
   return (
     <>
       {label && <FieldLabel htmlFor={`form-${field.name}`}>{label}</FieldLabel>}
