@@ -7,27 +7,30 @@ import { TextField } from '@/components/TextField';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldGroup } from '@/components/ui/field';
+import { getAddressApi } from '@/lib/api/address';
 import { SignupFormType } from '@/lib/form/signupForm';
 import { signupFormStore } from '@/lib/store/signupFormStore';
-import { dayList, monthList, yearList } from '@/lib/utils';
+import { dayList, monthList, prefectureList, yearList } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { useEffect } from 'react';
+import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 
 const sexOptions = [
   { label: '男性', value: 'male' },
   { label: '女性', value: 'female' },
 ];
 
-export default function SignInPage() {
+export default function SignUpPage() {
   const router = useRouter();
   const { form, setForm, clearForm } = signupFormStore();
-  const { handleSubmit, control } = useForm<SignupFormType>({
+  const methods = useForm<SignupFormType>({
     resolver: zodResolver(schema),
     defaultValues: form,
+    mode: 'onSubmit',
+    reValidateMode: 'onBlur',
   });
-
+  const postalCode = methods.watch('postalCode');
   const onSubmit: SubmitHandler<SignupFormType> = (data) => {
     setForm(data); // Zustand に保管
 
@@ -39,126 +42,106 @@ export default function SignInPage() {
     router.push('/login');
   };
 
+  useEffect(() => {
+    if (!postalCode || postalCode.length !== 7) return;
+
+    const getAddress = async () => {
+      try {
+        const response = await getAddressApi(postalCode);
+        if (!response) return;
+
+        methods.setValue('prefecture', response.address1, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+        methods.setValue('address', response.address2 + response.address3, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+      } catch (e) {
+        methods.setError('postalCode', {
+          type: 'manual',
+          message: e instanceof Error ? e.message : '住所情報の取得に失敗しました',
+        });
+        methods.resetField('prefecture');
+        methods.resetField('address');
+      }
+    };
+
+    getAddress();
+  }, [postalCode, methods]);
+
   return (
-    <>
+    <FormProvider {...methods}>
       <Card className="w-full max-w-[600px]">
         <CardHeader>
           <CardTitle>新規会員登録</CardTitle>
         </CardHeader>
         <CardContent>
-          <form id="signup-form" noValidate onSubmit={handleSubmit(onSubmit)}>
-            <FieldGroup>
+          <form noValidate id="signup-form" onSubmit={methods.handleSubmit(onSubmit)}>
+            <FieldGroup className="gap-8">
               <div className="grid grid-cols-2 gap-4">
                 <Field>
-                  <Controller
-                    name="lastName"
-                    control={control}
-                    render={({ field, fieldState }) => (
-                      <TextField
-                        field={field}
-                        fieldState={fieldState}
-                        name="lastName"
-                        label="姓"
-                        placeholder="山田"
-                      />
-                    )}
-                  />
+                  <TextField name="lastName" label="姓" required placeholder="山田" />
                 </Field>
                 <Field>
-                  <Controller
-                    name="firstName"
-                    control={control}
-                    render={({ field, fieldState }) => (
-                      <TextField
-                        field={field}
-                        fieldState={fieldState}
-                        name="firstName"
-                        label="名"
-                        placeholder="太郎"
-                      />
-                    )}
-                  />
-                </Field>
-              </div>
-              <div className="grid grid-cols-1">
-                <Field>
-                  <Controller
-                    name="email"
-                    control={control}
-                    render={({ field, fieldState }) => (
-                      <TextField
-                        field={field}
-                        fieldState={fieldState}
-                        name="email"
-                        label="メールアドレス"
-                        placeholder="メールアドレス"
-                        type="email"
-                      />
-                    )}
-                  />
+                  <TextField name="firstName" label="名" required placeholder="太郎" />
                 </Field>
               </div>
               <Field>
-                <Controller
-                  name="gender"
-                  control={control}
-                  render={({ field, fieldState }) => (
-                    <RadioField
-                      field={field}
-                      fieldState={fieldState}
-                      Grouplabel="性別"
-                      options={sexOptions}
-                    />
-                  )}
+                <TextField
+                  name="email"
+                  label="メールアドレス"
+                  required
+                  placeholder="name@example.com"
+                  type="email"
+                  autoComplete="email"
                 />
               </Field>
 
+              <Field>
+                <RadioField name="gender" label="性別" required options={sexOptions} />
+              </Field>
               <Field orientation="horizontal">
-                <Controller
+                <SelectField
                   name="year"
-                  control={control}
-                  render={({ field, fieldState }) => (
-                    <SelectField
-                      field={field}
-                      fieldState={fieldState}
-                      placeholder="年"
-                      options={yearList}
-                      selectBoxLabel="生年月日"
-                    />
-                  )}
+                  options={yearList}
+                  label="生年月日"
+                  required
+                  endLabel="年"
                 />
-                <Controller
-                  name="month"
-                  control={control}
-                  render={({ field, fieldState }) => (
-                    <SelectField
-                      field={field}
-                      fieldState={fieldState}
-                      placeholder="月"
-                      options={monthList}
-                    />
-                  )}
+                <SelectField name="month" options={monthList} endLabel="月" required />
+                <SelectField name="day" options={dayList} endLabel="日" required />
+              </Field>
+              <Field>
+                <TextField
+                  name="postalCode"
+                  label="郵便番号"
+                  required
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="postal-code"
+                  maxLength={7}
+                  onChange={(e) => {
+                    // 数字以外除去
+                    e.target.value = e.target.value.replace(/\D/g, '').slice(0, 7);
+                    methods.setValue('postalCode', e.target.value);
+                  }}
                 />
-                <Controller
-                  name="day"
-                  control={control}
-                  render={({ field, fieldState }) => (
-                    <SelectField
-                      field={field}
-                      fieldState={fieldState}
-                      placeholder="日"
-                      options={dayList}
-                    />
-                  )}
-                />
+              </Field>
+              <Field>
+                <SelectField name="prefecture" options={prefectureList} label="都道府県" required />
+              </Field>
+              <Field>
+                <TextField name="address" label="市区町村" required type="text" maxLength={100} />
               </Field>
             </FieldGroup>
           </form>
         </CardContent>
         <CardFooter className="flex">
           <div className="flex gap-2">
-            <Button onClick={onClickPageBack} className="w-full" variant="outline">
-              <Link href="/login">戻る</Link>
+            <Button type="button" onClick={onClickPageBack} className="w-full" variant="outline">
+              戻る
             </Button>
             <Button type="submit" form="signup-form" className="w-full">
               確認画面へ進む
@@ -166,6 +149,6 @@ export default function SignInPage() {
           </div>
         </CardFooter>
       </Card>
-    </>
+    </FormProvider>
   );
 }

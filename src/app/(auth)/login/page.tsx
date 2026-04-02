@@ -4,11 +4,13 @@ import { TextField } from '@/components/TextField';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldGroup } from '@/components/ui/field';
+import { InputGroupButton } from '@/components/ui/input-group';
 import { loginApi } from '@/lib/api/auth';
 import { EyeOffIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { useState } from 'react';
+import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 
 type FormType = {
   username: string;
@@ -17,15 +19,17 @@ type FormType = {
 
 export default function LoginPage() {
   const router = useRouter();
-  const { handleSubmit, control } = useForm<FormType>({
+  const [isShownPassword, setIsShownPassword] = useState<boolean>(false);
+  const methods = useForm<FormType>({
     defaultValues: {
       username: 'emilys',
       password: 'emilyspass',
     },
+    mode: 'onSubmit',
+    reValidateMode: 'onBlur',
   });
 
   const onSubmit: SubmitHandler<FormType> = async (data) => {
-    console.log(data);
     const res = await loginApi(data.username, data.password);
     localStorage.setItem('accessToken', res.accessToken);
 
@@ -33,45 +37,35 @@ export default function LoginPage() {
   };
 
   return (
-    <>
+    <FormProvider {...methods}>
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>ログイン</CardTitle>
         </CardHeader>
         <CardContent>
-          <form id="login-form" onSubmit={handleSubmit(onSubmit)}>
+          <form noValidate id="login-form" onSubmit={methods.handleSubmit(onSubmit)}>
             <FieldGroup>
               <Field>
-                <Controller
-                  name="username"
-                  control={control}
-                  render={({ field, fieldState }) => (
-                    <TextField
-                      field={field}
-                      fieldState={fieldState}
-                      name="username"
-                      label="username"
-                      placeholder="emilys"
-                    />
-                  )}
-                />
+                <TextField name="username" label="ユーザー名" />
               </Field>
               <Field>
-                <Controller
+                <TextField
                   name="password"
-                  control={control}
-                  render={({ field, fieldState }) => (
-                    <TextField
-                      field={field}
-                      fieldState={fieldState}
-                      name="password"
-                      placeholder="emilyspass"
-                      autoComplete="off"
-                      label="password"
-                      icon={<EyeOffIcon />}
-                      iconAlign="inline-end"
-                    />
-                  )}
+                  type={isShownPassword ? 'text' : 'password'}
+                  label="パスワード"
+                  autoComplete="off"
+                  icon={
+                    <InputGroupButton
+                      size="icon-xs"
+                      onClick={() => {
+                        console.log('isShownPassword');
+                        setIsShownPassword(!isShownPassword);
+                      }}
+                    >
+                      <EyeOffIcon />
+                    </InputGroupButton>
+                  }
+                  iconAlign="inline-end"
                 />
               </Field>
             </FieldGroup>
@@ -84,11 +78,11 @@ export default function LoginPage() {
           <Button asChild variant="outline" className="w-full">
             <Link href="/signup">新規登録はこちら</Link>
           </Button>
-          <a href="#" className="ml-auto inline-block text-sm underline-offset-4 ">
+          <Link href="#" className="ml-auto inline-block text-sm underline-offset-4 ">
             パスワードを忘れた方はこちら
-          </a>
+          </Link>
         </CardFooter>
       </Card>
-    </>
+    </FormProvider>
   );
 }

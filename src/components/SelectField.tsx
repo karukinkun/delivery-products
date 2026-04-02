@@ -1,4 +1,5 @@
-import { Field, FieldError, FieldLabel } from '@/components/ui/field';
+import { LabelField } from '@/components/LabelField';
+import { Field, FieldError } from '@/components/ui/field';
 import {
   Select,
   SelectContent,
@@ -7,50 +8,61 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type {
-  ControllerFieldState,
-  ControllerRenderProps,
-  FieldValues,
-  Path,
-} from 'react-hook-form';
+import { cn } from '@/lib/utils';
+import { ComponentProps } from 'react';
+import { useController, useFormContext, type FieldValues, type Path } from 'react-hook-form';
 
 type Props<TFieldValues extends FieldValues, TName extends Path<TFieldValues>> = {
-  field: ControllerRenderProps<TFieldValues, TName>;
-  fieldState: ControllerFieldState;
+  name: TName;
+  label?: string;
+  endLabel?: string;
+  required?: boolean;
   options: { label: string; value: string | number }[];
-  placeholder?: string;
-  selectBoxLabel?: string;
-  disabled?: boolean;
-};
+} & Omit<ComponentProps<typeof SelectTrigger>, 'id' | 'name' | 'value' | 'onValueChange'>;
 
-export function SelectField<TFieldValues extends FieldValues, TName extends Path<TFieldValues>>(
-  props: Props<TFieldValues, TName>,
-) {
-  const { field, fieldState, options, placeholder, selectBoxLabel, disabled = false } = props;
+export function SelectField<TFieldValues extends FieldValues, TName extends Path<TFieldValues>>({
+  name,
+  label,
+  endLabel,
+  options,
+  required = false,
+  ...props
+}: Props<TFieldValues, TName>) {
+  const { control } = useFormContext();
+  const { field, fieldState } = useController({
+    name,
+    control,
+  });
+
+  const formId = `form-${field.name}`;
+  const errorId = `error-${field.name}`;
 
   return (
-    <>
-      <Field orientation="vertical" className="self-end">
-        {selectBoxLabel && <FieldLabel>{selectBoxLabel}</FieldLabel>}
-        <Select name={field.name} value={field.value.toString()} onValueChange={field.onChange}>
+    <Field orientation="vertical" className="self-end">
+      {label && <LabelField label={label} htmlFor={formId} required={required} />}
+      <div className="flex items-center gap-2">
+        <Select value={field.value?.toString() ?? ''} onValueChange={(val) => field.onChange(val)}>
           <SelectTrigger
-            id={`form-${field.name}`}
+            id={formId}
             aria-invalid={fieldState.invalid}
-            className="min-w-[120px]"
+            aria-describedby={fieldState.error ? errorId : undefined}
+            {...props}
+            className={cn('w-full', props.className)}
           >
-            <SelectValue placeholder={placeholder || ''} />
+            <SelectValue />
           </SelectTrigger>
           <SelectContent position="item-aligned">
             <SelectSeparator />
             {options.map((option) => (
-              <SelectItem key={option.value} value={option.value.toString()} disabled={disabled}>
+              <SelectItem key={option.value} value={option.value?.toString() ?? ''}>
                 {option.label}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
-        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-      </Field>
-    </>
+        {endLabel && <span>{endLabel}</span>}
+      </div>
+      {fieldState.error?.message && <FieldError id={errorId} errors={[fieldState.error]} />}
+    </Field>
   );
 }

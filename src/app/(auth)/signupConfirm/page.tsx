@@ -1,31 +1,14 @@
 'use client';
 
-import { schema } from '@/app/(auth)/signup/schema';
-import { RadioField } from '@/components/RadioField';
-import { SelectField } from '@/components/SelectField';
-import { TextField } from '@/components/TextField';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Field, FieldGroup } from '@/components/ui/field';
-import { SignupFormType } from '@/lib/form/signupForm';
+import { Field, FieldDescription, FieldGroup, FieldLegend } from '@/components/ui/field';
 import { signupFormStore } from '@/lib/store/signupFormStore';
-import { dayList, monthList, yearList } from '@/lib/utils';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { Controller, useForm } from 'react-hook-form';
-
-const sexOptions = [
-  { label: '男性', value: 'male' },
-  { label: '女性', value: 'female' },
-];
 
 export default function SignInPage() {
   const router = useRouter();
   const { form, clearForm } = signupFormStore();
-  const { control } = useForm<SignupFormType>({
-    resolver: zodResolver(schema),
-    defaultValues: form,
-  });
 
   const onClick = () => {
     // ToDo: ここで会員登録APIを呼び出す
@@ -42,113 +25,23 @@ export default function SignInPage() {
         </CardHeader>
         <CardContent>
           <FieldGroup>
-            <div className="grid grid-cols-2 gap-4">
-              <Field>
-                <Controller
-                  name="lastName"
-                  control={control}
-                  render={({ field, fieldState }) => (
-                    <TextField
-                      field={field}
-                      fieldState={fieldState}
-                      name="lastName"
-                      label="姓"
-                      placeholder="山田"
-                      disabled={true}
-                    />
-                  )}
-                />
-              </Field>
-              <Field>
-                <Controller
-                  name="firstName"
-                  control={control}
-                  render={({ field, fieldState }) => (
-                    <TextField
-                      field={field}
-                      fieldState={fieldState}
-                      name="firstName"
-                      label="名"
-                      placeholder="太郎"
-                      disabled={true}
-                    />
-                  )}
-                />
-              </Field>
-            </div>
-            <div className="grid grid-cols-1">
-              <Field>
-                <Controller
-                  name="email"
-                  control={control}
-                  render={({ field, fieldState }) => (
-                    <TextField
-                      field={field}
-                      fieldState={fieldState}
-                      name="email"
-                      label="メールアドレス"
-                      placeholder="メールアドレス"
-                      type="email"
-                      disabled={true}
-                    />
-                  )}
-                />
-              </Field>
-            </div>
             <Field>
-              <Controller
-                name="gender"
-                control={control}
-                render={({ field, fieldState }) => (
-                  <RadioField
-                    field={field}
-                    fieldState={fieldState}
-                    Grouplabel="性別"
-                    options={sexOptions}
-                  />
-                )}
-              />
+              <FieldLegend>名前</FieldLegend>
+              <FieldDescription>
+                {form.lastName} {form.firstName}
+              </FieldDescription>
             </Field>
-            <Field orientation="horizontal">
-              <Controller
-                name="year"
-                control={control}
-                render={({ field, fieldState }) => (
-                  <SelectField
-                    field={field}
-                    fieldState={fieldState}
-                    placeholder="年"
-                    options={yearList}
-                    selectBoxLabel="生年月日"
-                    disabled={true}
-                  />
-                )}
-              />
-              <Controller
-                name="month"
-                control={control}
-                render={({ field, fieldState }) => (
-                  <SelectField
-                    field={field}
-                    fieldState={fieldState}
-                    placeholder="月"
-                    options={monthList}
-                    disabled={true}
-                  />
-                )}
-              />
-              <Controller
-                name="day"
-                control={control}
-                render={({ field, fieldState }) => (
-                  <SelectField
-                    field={field}
-                    fieldState={fieldState}
-                    placeholder="日"
-                    options={dayList}
-                  />
-                )}
-              />
+            <Field>
+              <FieldLegend>メールアドレス</FieldLegend>
+              <FieldDescription>{form.email}</FieldDescription>
+            </Field>
+            <Field>
+              <FieldLegend>性別</FieldLegend>
+              <FieldDescription>{form.gender === 'male' ? '男性' : '女性'}</FieldDescription>
+            </Field>
+            <Field>
+              <FieldLegend>生年月日</FieldLegend>
+              <FieldDescription>{`${form.year}年${form.month}月${form.day}日`}</FieldDescription>
             </Field>
           </FieldGroup>
         </CardContent>

@@ -1,52 +1,61 @@
-import { Field, FieldError, FieldLabel } from '@/components/ui/field';
+import { LabelField } from '@/components/LabelField';
+import { Field, FieldError } from '@/components/ui/field';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import type {
-  ControllerFieldState,
-  ControllerRenderProps,
-  FieldValues,
-  Path,
-} from 'react-hook-form';
+import { ComponentProps } from 'react';
+import { useController, useFormContext, type FieldValues, type Path } from 'react-hook-form';
 
 type Props<TFieldValues extends FieldValues, TName extends Path<TFieldValues>> = {
-  Grouplabel?: string;
-  field: ControllerRenderProps<TFieldValues, TName>;
-  fieldState: ControllerFieldState;
+  name: TName;
+  label?: string;
   orientation?: 'horizontal' | 'vertical';
+  required?: boolean;
+  className?: string;
   options: { label: string; value: string }[];
-};
+} & Omit<ComponentProps<typeof RadioGroup>, 'name' | 'id' | 'value' | 'onValueChange'>;
 
 export function RadioField<TFieldValues extends FieldValues, TName extends Path<TFieldValues>>({
-  Grouplabel,
-  field,
-  fieldState,
-  orientation,
+  name,
+  label,
+  orientation = 'horizontal',
+  required = false,
   options,
+  className,
+  ...props
 }: Props<TFieldValues, TName>) {
+  const { control } = useFormContext();
+  const { field, fieldState } = useController({
+    name,
+    control,
+  });
+  const formId = `form-${field.name}`;
+  const errorId = `error-${field.name}`;
+
   return (
     <>
-      {Grouplabel && <FieldLabel>{Grouplabel}</FieldLabel>}
+      {label && <LabelField label={label} required={required} />}
       <RadioGroup
-        id={`form-${field.name}`}
+        id={formId}
+        value={field.value}
         onValueChange={field.onChange}
         aria-invalid={fieldState.invalid}
-        className="w-fit"
-        {...field}
+        aria-describedby={fieldState.error ? errorId : undefined}
+        {...props}
       >
-        <Field orientation={orientation || 'horizontal'} data-invalid={fieldState.invalid}>
+        <Field orientation={orientation}>
           {options.map((option) => (
             <div key={option.value} className="flex items-center gap-3">
               <RadioGroupItem
+                id={`${name}-${option.value}`}
                 value={option.value}
-                id={option.value}
                 aria-invalid={fieldState.invalid}
               />
-              <Label htmlFor={option.value}>{option.label}</Label>
+              <Label htmlFor={`${name}-${option.value}`}>{option.label}</Label>
             </div>
           ))}
         </Field>
       </RadioGroup>
-      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+      {fieldState.error?.message && <FieldError id={errorId} errors={[fieldState.error]} />}
     </>
   );
 }

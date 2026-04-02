@@ -11,4 +11,7 @@ export const signupDefaultValues: SignupFormType = {
   year: '',
   month: '',
   day: '',
+  postalCode: '',
+  prefecture: '',
+  address: '',
 };
