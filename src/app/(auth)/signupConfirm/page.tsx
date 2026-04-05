@@ -6,7 +6,7 @@ import { Field, FieldDescription, FieldGroup, FieldLegend } from '@/components/u
 import { signupFormStore } from '@/lib/store/signupFormStore';
 import { useRouter } from 'next/navigation';
 
-export default function SignInPage() {
+const SignUpConfirm = () => {
   const router = useRouter();
   const { form, clearForm } = signupFormStore();
 
@@ -63,4 +63,6 @@ export default function SignInPage() {
       </Card>
     </>
   );
-}
+};
+
+export default SignUpConfirm;

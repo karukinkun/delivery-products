@@ -48,7 +48,9 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
+  /* サイト全体の下地（body など）。入力欄は白のまま */
+  --background-input: oklch(1 0 0);
+  --background: oklch(0.9777 0.0066 106.52);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -83,7 +85,8 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
+  --background-input: oklch(0.145 0 0);
+  --background: var(--background-input);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);

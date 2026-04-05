@@ -21,7 +21,7 @@ const sexOptions = [
   { label: '女性', value: 'female' },
 ];
 
-export default function SignUpPage() {
+const SignUpPage = () => {
   const router = useRouter();
   const { form, setForm, clearForm } = signupFormStore();
   const methods = useForm<SignupFormType>({
@@ -30,10 +30,15 @@ export default function SignUpPage() {
     mode: 'onSubmit',
     reValidateMode: 'onBlur',
   });
-  const postalCode = methods.watch('postalCode');
+  const { setValue, setError, resetField, watch } = methods;
+
+  // 郵便番号が七桁入力されたらAPIから住所情報を取得するため、watchで郵便番号を毎入力取得する
+  const postalCode = watch('postalCode');
+
   const onSubmit: SubmitHandler<SignupFormType> = (data) => {
     setForm(data); // Zustand に保管
 
+    // 会員登録確認画面へ遷移
     router.push('/signupConfirm');
   };
 
@@ -50,26 +55,26 @@ export default function SignUpPage() {
         const response = await getAddressApi(postalCode);
         if (!response) return;
 
-        methods.setValue('prefecture', response.address1, {
+        setValue('prefecture', response.address1, {
           shouldValidate: true,
           shouldDirty: true,
         });
-        methods.setValue('address', response.address2 + response.address3, {
+        setValue('address', response.address2 + response.address3, {
           shouldValidate: true,
           shouldDirty: true,
         });
       } catch (e) {
-        methods.setError('postalCode', {
+        setError('postalCode', {
           type: 'manual',
           message: e instanceof Error ? e.message : '住所情報の取得に失敗しました',
         });
-        methods.resetField('prefecture');
-        methods.resetField('address');
+        resetField('prefecture');
+        resetField('address');
       }
     };
 
     getAddress();
-  }, [postalCode, methods]);
+  }, [postalCode, setValue, setError, resetField]);
 
   return (
     <FormProvider {...methods}>
@@ -98,7 +103,6 @@ export default function SignUpPage() {
                   autoComplete="email"
                 />
               </Field>
-
               <Field>
                 <RadioField name="gender" label="性別" required options={sexOptions} />
               </Field>
@@ -151,4 +155,6 @@ export default function SignUpPage() {
       </Card>
     </FormProvider>
   );
-}
+};
+
+export default SignUpPage;

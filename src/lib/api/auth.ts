@@ -13,7 +13,12 @@ export type LoginResponse = {
   username: string;
 };
 
-export async function loginApi(username: string, password: string): Promise<LoginResponse> {
+type LoginRequest = {
+  username: string;
+  password: string;
+};
+export async function loginApi(props: LoginRequest): Promise<LoginResponse> {
+  const { username, password } = props;
   return apiClient(async () => {
     try {
       const { data } = await axios.post<LoginResponse>('https://dummyjson.com/auth/login', {

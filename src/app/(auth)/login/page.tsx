@@ -12,25 +12,28 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 
-type FormType = {
+type LoginFormType = {
   username: string;
   password: string;
 };
 
-export default function LoginPage() {
+const LoginPage = () => {
   const router = useRouter();
   const [isShownPassword, setIsShownPassword] = useState<boolean>(false);
-  const methods = useForm<FormType>({
+  const methods = useForm<LoginFormType>({
     defaultValues: {
-      username: 'emilys',
-      password: 'emilyspass',
+      // 開発時のみ初期値設定
+      username:
+        process.env.NODE_ENV === 'development' ? process.env.NEXT_PUBLIC_LOGIN_USERNAME : '',
+      password:
+        process.env.NODE_ENV === 'development' ? process.env.NEXT_PUBLIC_LOGIN_PASSWORD : '',
     },
     mode: 'onSubmit',
     reValidateMode: 'onBlur',
   });
 
-  const onSubmit: SubmitHandler<FormType> = async (data) => {
-    const res = await loginApi(data.username, data.password);
+  const onSubmit: SubmitHandler<LoginFormType> = async (data) => {
+    const res = await loginApi(data);
     localStorage.setItem('accessToken', res.accessToken);
 
     router.push('/');
@@ -57,10 +60,7 @@ export default function LoginPage() {
                   icon={
                     <InputGroupButton
                       size="icon-xs"
-                      onClick={() => {
-                        console.log('isShownPassword');
-                        setIsShownPassword(!isShownPassword);
-                      }}
+                      onClick={() => setIsShownPassword((prev) => !prev)}
                     >
                       <EyeOffIcon />
                     </InputGroupButton>
@@ -85,4 +85,6 @@ export default function LoginPage() {
       </Card>
     </FormProvider>
   );
-}
+};
+
+export default LoginPage;

@@ -9,7 +9,10 @@
   },
   // ファイル保存時に自動でフォーマットを実行
   "editor.formatOnSave": true,
-
+  "eslint.enable": true,
+  "eslint.experimental.useFlatConfig": false,
+  "eslint.workingDirectories": [{ "mode": "auto" }],
+  "eslint.run": "onType",
   // 保存時にESLintで修正可能なエラーを自動修正
   // 保存時に不足しているimportを自動追加（TypeScript/JavaScript）
   "editor.codeActionsOnSave": {
@@ -24,6 +27,7 @@
   "javascript.preferences.importModuleSpecifier": "non-relative",
 
   // ESLintを適用するファイルタイプを指定
+
   "eslint.validate": [
     "javascript", // .js ファイル
     "javascriptreact", // .jsx ファイル

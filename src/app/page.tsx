@@ -1,7 +1,7 @@
 import ProductList from '@/app/ProductList';
 import { getProductsApi } from '@/lib/api/product';
 
-export default async function Home() {
+const Home = async () => {
   const products = await getProductsApi();
 
   return (
@@ -9,4 +9,6 @@ export default async function Home() {
       <ProductList initialProducts={products} />
     </div>
   );
-}
+};
+
+export default Home;
