@@ -1,44 +1,25 @@
-import { apiClient } from '@/lib/api/client';
-import axios from 'axios';
+import { Product, ProductsResponse } from '@/types/product';
 
-export type Product = {
-  id: number;
-  title: string;
-  description: string;
-  price: number;
-  discountPercentage: number;
-  rating: number;
-  stock: number;
-  brand: string;
-  category: string;
-  thumbnail: string;
-};
+export async function getProductsApi(fullKeyword: string): Promise<Product[]> {
+  // 検索ワードに含まれている半角 or 全角スペースで分割して、それぞれの単語をリストで取得
+  const keywords = fullKeyword.toLowerCase().trim().split(/\s+/);
 
-export type ProductsResponse = {
-  products: Product[];
-  total: number;
-  skip: number;
-  limit: number;
-};
-
-export async function getProductsApi(search: string = ''): Promise<Product[]> {
-  return apiClient(async () => {
-    try {
-      const { data } = await axios.get<ProductsResponse>('https://dummyjson.com/products/search', {
-        params: { q: search, limit: 25 },
-      });
-
-      return data.products;
-    } catch (error) {
-      // Axiosエラーか判定
-      if (axios.isAxiosError(error)) {
-        console.error('API Error:', error.response?.data);
-        throw new Error('商品の取得に失敗しました');
-      }
-
-      // 予期しないエラー
-      console.error('Unexpected Error:', error);
-      throw new Error('予期しないエラーが発生しました');
-    }
+  // 1つ目のキーワードを含む商品を取得
+  const res = await fetch(`https://dummyjson.com/products/search?q=${keywords[0]}&limit=40`, {
+    cache: 'force-cache', // パフォーマンスのため取得したデータをキャッシュする
+    next: { revalidate: 60 }, // 60秒後にデータを再取得してキャッシュを更新する
   });
+
+  if (!res.ok) {
+    throw new Error('商品の取得に失敗しました');
+  }
+
+  const data: ProductsResponse = await res.json();
+
+  // それぞれのキーワードで商品をさらにフィルタリングして取得
+  const filteredData = data.products.filter((product) =>
+    keywords.every((keyword) => product.title.toLowerCase().includes(keyword)),
+  );
+
+  return filteredData;
 }

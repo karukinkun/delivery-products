@@ -9,7 +9,7 @@ const loadingStore = create<StoreType>((set) => ({
   isLoading: false,
   setIsLoading: (isLoading: boolean) =>
     set({
-      isLoading: isLoading,
+      isLoading,
     }),
 }));
 

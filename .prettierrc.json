@@ -1,13 +1,5 @@
 {
-  "importOrder": [
-    "^react",
-    "^next",
-    "<THIRD_PARTY_MODULES>",
-    "^@/app/(.*)",
-    "^@/components/(.*)",
-    "^@/utils/(.*)",
-    "^[./]"
-  ],
+  "plugins": ["prettier-plugin-tailwindcss"],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true,
   "semi": true,

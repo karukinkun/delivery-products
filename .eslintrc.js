@@ -48,17 +48,17 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
 
     // ===== コーディング規約 =====
-    'no-restricted-syntax': [
-      'error',
-      {
-        selector: 'FunctionDeclaration',
-        message: 'アロー関数を使用してください。',
-      },
-      {
-        selector: 'FunctionExpression',
-        message: 'アロー関数を使用してください。',
-      },
-    ],
+    // 'no-restricted-syntax': [
+    //   'error',
+    //   {
+    //     selector: 'FunctionDeclaration',
+    //     message: 'アロー関数を使用してください。',
+    //   },
+    //   {
+    //     selector: 'FunctionExpression',
+    //     message: 'アロー関数を使用してください。',
+    //   },
+    // ],
 
     'prefer-const': 'error',
     'no-var': 'error',

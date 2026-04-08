@@ -1,12 +1,21 @@
+import Loading from '@/app/loading';
 import ProductList from '@/app/ProductList';
-import { getProductsApi } from '@/lib/api/product';
+import SearchForm from '@/app/SearchForm';
+import { Suspense } from 'react';
 
-const Home = async () => {
-  const products = await getProductsApi();
+type SearchParams = {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+const Home = async ({ searchParams }: SearchParams) => {
+  const params = await searchParams;
+  const query = Array.isArray(params.q) ? params.q[0] : (params.q ?? '');
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
-      <ProductList initialProducts={products} />
+      <SearchForm />
+      <Suspense fallback={<Loading />}>
+        <ProductList query={query} />
+      </Suspense>
     </div>
   );
 };
