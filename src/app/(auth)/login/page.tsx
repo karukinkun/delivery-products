@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 
-type LoginFormType = {
+type FormType = {
   username: string;
   password: string;
 };
@@ -20,7 +20,7 @@ type LoginFormType = {
 const LoginPage = () => {
   const router = useRouter();
   const [isShownPassword, setIsShownPassword] = useState<boolean>(false);
-  const methods = useForm<LoginFormType>({
+  const methods = useForm<FormType>({
     defaultValues: {
       // 開発時のみ初期値設定
       username:
@@ -32,8 +32,8 @@ const LoginPage = () => {
     reValidateMode: 'onBlur',
   });
 
-  const onSubmit: SubmitHandler<LoginFormType> = async (data) => {
-    const res = await loginApi(data);
+  const onSubmit: SubmitHandler<FormType> = async (data) => {
+    const res = await loginApi(data.username, data.password);
     localStorage.setItem('accessToken', res.accessToken);
 
     router.push('/');
@@ -78,7 +78,7 @@ const LoginPage = () => {
           <Button asChild variant="outline" className="w-full">
             <Link href="/signup">新規登録はこちら</Link>
           </Button>
-          <Link href="#" className="ml-auto inline-block text-sm underline-offset-4 ">
+          <Link href="#" className="ml-auto inline-block text-sm underline-offset-4">
             パスワードを忘れた方はこちら
           </Link>
         </CardFooter>

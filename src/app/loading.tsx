@@ -7,7 +7,7 @@ const Loading = (props: PropsType) => {
   const { className = '' } = props;
 
   return (
-    <div className={`flex items-center justify-center mt-30 ${className}`}>
+    <div className={`mt-30 flex w-full items-center justify-center ${className}`}>
       <Spinner />
     </div>
   );

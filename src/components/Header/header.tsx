@@ -8,7 +8,7 @@ const Header = () => {
   return (
     <header className="h-[120px]">
       <div className="h-[80px]">
-        <div className="flex items-center justify-between max-w-[1080px] mx-auto">
+        <div className="mx-auto flex max-w-[1024px] items-center justify-between">
           <h1 className="flex items-center">
             <Link href="/" className="block text-center">
               <Image
@@ -25,7 +25,7 @@ const Header = () => {
             <li className="mr-3">
               <Link href="/login" className="block text-center">
                 <Image
-                  className="m-auto w-[26px] h-[29px]"
+                  className="m-auto h-[29px] w-[26px]"
                   src="/icon_login.svg"
                   alt="ログインする"
                   width={26}
@@ -37,7 +37,7 @@ const Header = () => {
             <li>
               <Link href="/cart" className="block text-center">
                 <Image
-                  className="m-auto w-[26px] h-[29px]"
+                  className="m-auto h-[29px] w-[26px]"
                   src="/icon_cart.svg"
                   alt="カートを見る"
                   width={26}

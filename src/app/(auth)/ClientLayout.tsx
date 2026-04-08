@@ -15,7 +15,7 @@ const ClientLayout = ({ children }: { children: React.ReactNode }) => {
       {
         // API実行中など時間かかる場合に、ローディングのみを表示する
         isLoading && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
             <Spinner />
           </div>
         )

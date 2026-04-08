@@ -1,25 +1,12 @@
 'use client';
 
 import Header from '@/components/Header/header';
-import { Spinner } from '@/components/ui/spinner';
-import loadingStore from '@/lib/store/loadingStore';
 
 const ClientLayout = ({ children }: { children: React.ReactNode }) => {
-  const { isLoading } = loadingStore();
-
   return (
     <>
       <Header />
-      <main className="flex justify-center">{children}</main>
-
-      {
-        // API実行中など時間かかる場合に、ローディングのみを表示する
-        isLoading && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
-            <Spinner />
-          </div>
-        )
-      }
+      <main className="mx-auto flex max-w-[1024px] px-3 sm:px-5 lg:px-0">{children}</main>
     </>
   );
 };

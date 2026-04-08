@@ -9,6 +9,12 @@ export type Product = {
   brand: string;
   category: string;
   thumbnail: string;
+  reviews?: {
+    rating: number;
+    comment: string;
+    date: string;
+    reviewerName: string;
+  }[];
 };
 
 export type ProductsResponse = {
