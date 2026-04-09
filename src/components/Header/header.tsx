@@ -1,24 +1,22 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-const logoImageWidth = 200;
-const logoImageHeight = 70;
-
 const Header = () => {
   return (
     <header className="h-[120px]">
       <div className="h-[80px]">
-        <div className="mx-auto flex max-w-[1024px] items-center justify-between">
-          <h1 className="flex items-center">
+        <div className="mx-auto flex items-center justify-between px-4 sm:px-6 md:px-6 lg:max-w-[1024px] lg:px-4">
+          <h1 className="relative flex items-center">
             <Link href="/" className="block text-center">
-              <Image
-                width={logoImageWidth}
-                height={logoImageHeight}
-                src="/icon_logo.svg"
-                alt="サービスロゴ"
-                priority
-                className={`h-auto w-[${logoImageWidth}px]`}
-              />
+              <div className="relative h-[70px] w-[140px]">
+                <Image
+                  fill
+                  className="object-contain"
+                  src="/icon_logo.svg"
+                  alt="サービスロゴ"
+                  priority
+                />
+              </div>
             </Link>
           </h1>
           <ul className="flex items-center justify-end">
