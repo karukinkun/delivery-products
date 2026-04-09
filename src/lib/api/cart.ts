@@ -1,4 +1,4 @@
-import { AddToCartResponse } from '@/types/cart';
+import { AddToCartResponse, CartItemsResponse } from '@/types/cart';
 
 export async function addToCartApi(
   id: number,
@@ -23,6 +23,19 @@ export async function addToCartApi(
 
   if (!res.ok) {
     throw new Error('カート追加に失敗しました');
+  }
+
+  const data = await res.json();
+  return data;
+}
+
+export async function getCartsApi(userId: number): Promise<CartItemsResponse> {
+  const res = await fetch(`https://dummyjson.com/carts/user/${userId}`, {
+    cache: 'no-store', // キャッシュせず常に最新のデータを取得
+  });
+
+  if (!res.ok) {
+    throw new Error('カート情報の取得に失敗しました');
   }
 
   const data = await res.json();

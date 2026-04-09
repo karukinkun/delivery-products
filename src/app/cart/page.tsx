@@ -1,16 +1,12 @@
 'use client';
+import CartProduct from '@/app/cart/CartProduct';
 import { Button } from '@/components/ui/button';
+import { Card, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { getUserInfoApi } from '@/lib/api/auth';
-import { addToCartApi } from '@/lib/api/cart';
-import { ReactNode, useEffect, useState } from 'react';
+import { Link } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
-type PropsType = {
-  id: number;
-  children: ReactNode;
-};
-
-export function AddToCartButton(props: PropsType) {
-  const { id, children } = props;
+const CartsPage = () => {
   const [userId, setUserId] = useState<number | null>(null);
 
   useEffect(() => {
@@ -34,23 +30,19 @@ export function AddToCartButton(props: PropsType) {
     fetchUserInfo();
   }, []);
 
-  // カートに商品を追加
-  const addToCart = async () => {
-    try {
-      if (!userId) {
-        throw new Error('カートに追加するにはログインする必要があります');
-      }
-      await addToCartApi(id, 1, userId);
-
-      // TODO: カートに商品が追加されたことを通知
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   return (
-    <Button className="w-full" size="lg" onClick={addToCart}>
-      {children}
-    </Button>
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle>カート</CardTitle>
+      </CardHeader>
+      {userId && <CartProduct userId={userId} />}
+      <CardFooter className="flex-col gap-2">
+        <Button asChild variant="outline" className="w-full">
+          <Link href="/">商品一覧へ戻る</Link>
+        </Button>
+      </CardFooter>
+    </Card>
   );
-}
+};
+
+export default CartsPage;
