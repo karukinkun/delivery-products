@@ -6,7 +6,6 @@ export type SignupFormType = z.infer<typeof schema>;
 export const signupDefaultValues: SignupFormType = {
   firstName: '',
   lastName: '',
-  email: '',
   gender: 'male',
   year: '',
   month: '',
@@ -14,4 +13,7 @@ export const signupDefaultValues: SignupFormType = {
   postalCode: '',
   prefecture: '',
   address: '',
+  email: '',
+  password: '',
+  passwordConfirm: '',
 };

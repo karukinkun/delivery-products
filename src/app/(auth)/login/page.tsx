@@ -23,13 +23,11 @@ const LoginPage = () => {
   const methods = useForm<FormType>({
     defaultValues: {
       // 開発時のみ初期値設定
-      username:
-        process.env.NODE_ENV === 'development' ? process.env.NEXT_PUBLIC_LOGIN_USERNAME : '',
-      password:
-        process.env.NODE_ENV === 'development' ? process.env.NEXT_PUBLIC_LOGIN_PASSWORD : '',
+      username: '',
+      password: '',
     },
     mode: 'onSubmit',
-    reValidateMode: 'onBlur',
+    reValidateMode: 'onChange',
   });
 
   const onSubmit: SubmitHandler<FormType> = async (data) => {

@@ -1,6 +1,6 @@
 'use client';
-
 import Header from '@/components/Header/header';
+import '@/lib/amplify';
 
 const ClientLayout = ({ children }: { children: React.ReactNode }) => {
   return (

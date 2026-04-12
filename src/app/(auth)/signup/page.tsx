@@ -12,6 +12,7 @@ import { SignupFormType } from '@/lib/form/signupForm';
 import { signupFormStore } from '@/lib/store/signupFormStore';
 import { dayList, monthList, prefectureList, yearList } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { words } from 'constants/messages';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
@@ -28,7 +29,7 @@ const SignUpPage = () => {
     resolver: zodResolver(schema),
     defaultValues: form,
     mode: 'onSubmit',
-    reValidateMode: 'onBlur',
+    reValidateMode: 'onChange',
   });
   const { setValue, setError, resetField, watch } = methods;
 
@@ -36,14 +37,14 @@ const SignUpPage = () => {
   const postalCode = watch('postalCode');
 
   const onSubmit: SubmitHandler<SignupFormType> = (data) => {
-    setForm(data); // Zustand に保管
+    setForm(data); // Zustand にフォーム情報を保存
 
-    // 会員登録確認画面へ遷移
+    // 会員登録確認ページへ遷移
     router.push('/signupConfirm');
   };
 
   const onClickPageBack = () => {
-    clearForm();
+    clearForm(); // Zustand からフォーム情報をクリア
     router.push('/login');
   };
 
@@ -87,22 +88,24 @@ const SignUpPage = () => {
             <FieldGroup className="gap-8">
               <div className="grid grid-cols-2 gap-4">
                 <Field>
-                  <TextField name="lastName" label="姓" required placeholder="山田" />
+                  <TextField
+                    name="lastName"
+                    label={words.lastName}
+                    required
+                    placeholder="山田"
+                    maxLength={20}
+                  />
                 </Field>
                 <Field>
-                  <TextField name="firstName" label="名" required placeholder="太郎" />
+                  <TextField
+                    name="firstName"
+                    label={words.firstName}
+                    required
+                    placeholder="太郎"
+                    maxLength={20}
+                  />
                 </Field>
               </div>
-              <Field>
-                <TextField
-                  name="email"
-                  label="メールアドレス"
-                  required
-                  placeholder="name@example.com"
-                  type="email"
-                  autoComplete="email"
-                />
-              </Field>
               <Field>
                 <RadioField name="gender" label="性別" required options={sexOptions} />
               </Field>
@@ -138,6 +141,22 @@ const SignUpPage = () => {
               </Field>
               <Field>
                 <TextField name="address" label="市区町村" required type="text" maxLength={100} />
+              </Field>
+              <Field>
+                <TextField
+                  name="email"
+                  label="メールアドレス"
+                  required
+                  placeholder="name@example.com"
+                  type="email"
+                  autoComplete="email"
+                />
+              </Field>
+              <Field>
+                <TextField name="password" label="パスワード" required type="password" />
+              </Field>
+              <Field>
+                <TextField name="passwordConfirm" label="パスワード確認" required type="password" />
               </Field>
             </FieldGroup>
           </form>

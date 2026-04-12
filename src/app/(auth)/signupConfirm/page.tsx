@@ -4,17 +4,33 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldDescription, FieldGroup, FieldLegend } from '@/components/ui/field';
 import { signupFormStore } from '@/lib/store/signupFormStore';
+import { signUp } from 'aws-amplify/auth';
 import { useRouter } from 'next/navigation';
 
 const SignUpConfirm = () => {
   const router = useRouter();
-  const { form, clearForm } = signupFormStore();
+  const { form } = signupFormStore();
 
-  const onClick = () => {
-    // ToDo: ここで会員登録APIを呼び出す
+  const onClick = async () => {
+    try {
+      await signUp({
+        username: form.email,
+        password: form.password,
+        options: {
+          userAttributes: {
+            email: form.email,
+            name: `${form.lastName} ${form.firstName}`,
+            gender: form.gender,
+            birthdate: `${form.year}-${form.month.padStart(2, '0')}-${form.day.padStart(2, '0')}`,
+            address: form.address,
+          },
+        },
+      });
 
-    clearForm(); // 状態管理を初期化
-    router.push('/signup');
+      router.push('/authCode');
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (
@@ -32,16 +48,20 @@ const SignUpConfirm = () => {
               </FieldDescription>
             </Field>
             <Field>
-              <FieldLegend>メールアドレス</FieldLegend>
-              <FieldDescription>{form.email}</FieldDescription>
-            </Field>
-            <Field>
               <FieldLegend>性別</FieldLegend>
               <FieldDescription>{form.gender === 'male' ? '男性' : '女性'}</FieldDescription>
             </Field>
             <Field>
               <FieldLegend>生年月日</FieldLegend>
               <FieldDescription>{`${form.year}年${form.month}月${form.day}日`}</FieldDescription>
+            </Field>
+            <Field>
+              <FieldLegend>メールアドレス</FieldLegend>
+              <FieldDescription>{form.email}</FieldDescription>
+            </Field>
+            <Field>
+              <FieldLegend>パスワード</FieldLegend>
+              <FieldDescription>************</FieldDescription>
             </Field>
           </FieldGroup>
         </CardContent>
