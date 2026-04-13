@@ -60,7 +60,7 @@ const AuthCodePage = () => {
 
   return (
     <FormProvider {...methods}>
-      <Card className="w-full max-w-[600px]">
+      <Card className="w-full max-w-lg">
         <CardHeader>
           <CardTitle>コードを認証してください</CardTitle>
         </CardHeader>

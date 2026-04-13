@@ -22,6 +22,8 @@ const genderOptions = [
   { label: words.female, value: 'female' },
 ];
 
+const currentYear = new Date().getFullYear();
+
 const SignUpPage = () => {
   const router = useRouter();
   const { form, setForm, clearForm } = signupFormStore();
@@ -80,7 +82,7 @@ const SignUpPage = () => {
 
   return (
     <FormProvider {...methods}>
-      <Card className="w-full max-w-[600px]">
+      <Card className="w-full max-w-lg">
         <CardHeader>
           <CardTitle>{words.signup}</CardTitle>
         </CardHeader>
@@ -113,7 +115,7 @@ const SignUpPage = () => {
               <Field orientation="horizontal">
                 <SelectField
                   name="year"
-                  options={yearList}
+                  options={yearList(currentYear)}
                   label={words.birthdate}
                   required
                   endLabel={words.year}
@@ -132,8 +134,8 @@ const SignUpPage = () => {
                   autoComplete="postal-code"
                   onChange={(e) => {
                     // 数字以外除去
-                    e.target.value = e.target.value.replace(/\D/g, '').slice(0, 7);
-                    methods.setValue('postalCode', e.target.value);
+                    const value = e.target.value.replace(/\D/g, '').slice(0, 7);
+                    methods.setValue('postalCode', value);
                     // 郵便番号のバリデーションを実行
                     methods.trigger('postalCode');
                   }}
@@ -207,12 +209,17 @@ const SignUpPage = () => {
             </FieldGroup>
           </form>
         </CardContent>
-        <CardFooter className="flex">
+        <CardFooter>
           <div className="flex gap-2">
-            <Button type="button" onClick={onClickPageBack} className="w-full" variant="outline">
+            <Button
+              type="button"
+              onClick={onClickPageBack}
+              className="w-full sm:mr-3 sm:w-[180px]"
+              variant="outline"
+            >
               {buttonMsg.back}
             </Button>
-            <Button type="submit" form="signup-form" className="w-full">
+            <Button type="submit" form="signup-form" className="w-full sm:w-[180px]">
               確認画面に進む
             </Button>
           </div>

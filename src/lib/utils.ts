@@ -6,7 +6,6 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 // 年月日のリスト
-const currentYear = new Date().getFullYear();
 const createYearList = (start: number, end: number) => {
   return Array.from({ length: end - start + 1 }, (_, i) => {
     const year = start + i;
@@ -17,7 +16,9 @@ const createYearList = (start: number, end: number) => {
   });
 };
 
-export const yearList = createYearList(currentYear - 100, currentYear);
+export const yearList = (currentYear: number) => {
+  return createYearList(currentYear - 100, currentYear);
+};
 
 export const monthList = Array.from({ length: 12 }, (_, i) => ({
   label: String(i + 1),
