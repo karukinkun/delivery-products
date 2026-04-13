@@ -12,14 +12,14 @@ import { SignupFormType } from '@/lib/form/signupForm';
 import { signupFormStore } from '@/lib/store/signupFormStore';
 import { dayList, monthList, prefectureList, yearList } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { words } from 'constants/messages';
+import { buttonMsg, fetchErrorMsg, words } from 'constants/messages';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 
-const sexOptions = [
-  { label: '男性', value: 'male' },
-  { label: '女性', value: 'female' },
+const genderOptions = [
+  { label: words.male, value: 'male' },
+  { label: words.female, value: 'female' },
 ];
 
 const SignUpPage = () => {
@@ -28,8 +28,7 @@ const SignUpPage = () => {
   const methods = useForm<SignupFormType>({
     resolver: zodResolver(schema),
     defaultValues: form,
-    mode: 'onSubmit',
-    reValidateMode: 'onChange',
+    mode: 'onChange',
   });
   const { setValue, setError, resetField, watch } = methods;
 
@@ -60,17 +59,19 @@ const SignUpPage = () => {
           shouldValidate: true,
           shouldDirty: true,
         });
-        setValue('address', response.address2 + response.address3, {
+        setValue('city', response.address2 + response.address3, {
           shouldValidate: true,
           shouldDirty: true,
         });
       } catch (e) {
         setError('postalCode', {
           type: 'manual',
-          message: e instanceof Error ? e.message : '住所情報の取得に失敗しました',
+          message: e instanceof Error ? e.message : fetchErrorMsg.postalCode.failure,
         });
         resetField('prefecture');
-        resetField('address');
+        resetField('city');
+        resetField('address1');
+        resetField('address2');
       }
     };
 
@@ -81,7 +82,7 @@ const SignUpPage = () => {
     <FormProvider {...methods}>
       <Card className="w-full max-w-[600px]">
         <CardHeader>
-          <CardTitle>新規会員登録</CardTitle>
+          <CardTitle>{words.signup}</CardTitle>
         </CardHeader>
         <CardContent>
           <form noValidate id="signup-form" onSubmit={methods.handleSubmit(onSubmit)}>
@@ -107,45 +108,78 @@ const SignUpPage = () => {
                 </Field>
               </div>
               <Field>
-                <RadioField name="gender" label="性別" required options={sexOptions} />
+                <RadioField name="gender" label={words.gender} required options={genderOptions} />
               </Field>
               <Field orientation="horizontal">
                 <SelectField
                   name="year"
                   options={yearList}
-                  label="生年月日"
+                  label={words.birthdate}
                   required
-                  endLabel="年"
+                  endLabel={words.year}
                 />
-                <SelectField name="month" options={monthList} endLabel="月" required />
-                <SelectField name="day" options={dayList} endLabel="日" required />
+                <SelectField name="month" options={monthList} endLabel={words.month} required />
+                <SelectField name="day" options={dayList} endLabel={words.day} required />
               </Field>
               <Field>
                 <TextField
                   name="postalCode"
-                  label="郵便番号"
+                  label={words.postalCode}
                   required
                   type="text"
                   inputMode="numeric"
-                  autoComplete="postal-code"
                   maxLength={7}
+                  autoComplete="postal-code"
                   onChange={(e) => {
                     // 数字以外除去
                     e.target.value = e.target.value.replace(/\D/g, '').slice(0, 7);
                     methods.setValue('postalCode', e.target.value);
+                    // 郵便番号のバリデーションを実行
+                    methods.trigger('postalCode');
                   }}
                 />
               </Field>
               <Field>
-                <SelectField name="prefecture" options={prefectureList} label="都道府県" required />
+                <SelectField
+                  name="prefecture"
+                  options={prefectureList}
+                  label={words.prefecture}
+                  required
+                />
               </Field>
               <Field>
-                <TextField name="address" label="市区町村" required type="text" maxLength={100} />
+                <TextField
+                  name="city"
+                  label={words.city}
+                  required
+                  type="text"
+                  maxLength={100}
+                  autoComplete="address-level2"
+                />
+              </Field>
+              <Field>
+                <TextField
+                  name="address1"
+                  label={words.address1}
+                  required
+                  type="text"
+                  maxLength={100}
+                  autoComplete="address-line1"
+                />
+              </Field>
+              <Field>
+                <TextField
+                  name="address2"
+                  label={words.address2}
+                  type="text"
+                  maxLength={100}
+                  autoComplete="address-line2"
+                />
               </Field>
               <Field>
                 <TextField
                   name="email"
-                  label="メールアドレス"
+                  label={words.email}
                   required
                   placeholder="name@example.com"
                   type="email"
@@ -153,10 +187,22 @@ const SignUpPage = () => {
                 />
               </Field>
               <Field>
-                <TextField name="password" label="パスワード" required type="password" />
+                <TextField
+                  name="password"
+                  label={words.password}
+                  required
+                  type="password"
+                  autoComplete="new-password"
+                />
               </Field>
               <Field>
-                <TextField name="passwordConfirm" label="パスワード確認" required type="password" />
+                <TextField
+                  name="passwordConfirm"
+                  label={words.passwordConfirm}
+                  required
+                  type="password"
+                  autoComplete="new-password"
+                />
               </Field>
             </FieldGroup>
           </form>
@@ -164,10 +210,10 @@ const SignUpPage = () => {
         <CardFooter className="flex">
           <div className="flex gap-2">
             <Button type="button" onClick={onClickPageBack} className="w-full" variant="outline">
-              戻る
+              {buttonMsg.back}
             </Button>
             <Button type="submit" form="signup-form" className="w-full">
-              確認画面へ進む
+              確認画面に進む
             </Button>
           </div>
         </CardFooter>

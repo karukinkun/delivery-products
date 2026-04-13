@@ -3,13 +3,6 @@ import { Amplify } from 'aws-amplify';
 const userPoolId = process.env.NEXT_PUBLIC_COGNITO_USER_POOL_ID?.trim() ?? '';
 const userPoolClientId = process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID?.trim() ?? '';
 
-// 下記のように直代入すると正常動作する
-// const userPoolId = 'ap-northeast-3_RAQ9tY8FM';
-// const userPoolClientId = '4g2s1s8sp4a0le8oo1aa93kjbf';
-
-console.log('userPoolId, userPoolClientId');
-console.log(userPoolId, userPoolClientId);
-
 if (userPoolId && userPoolClientId) {
   Amplify.configure({
     Auth: {

@@ -1,10 +1,9 @@
 import { prefectureList } from '@/lib/utils';
-import { messages } from 'constants/messages';
+import { validationErrorMsg } from 'constants/messages';
 import { z } from 'zod';
 
-const prefectureValues = prefectureList.map((p) => p.value) as [string, ...string[]];
-
-// このschema以外でも使用するため共通ファイルに移動予定
+// 都道府県の値を取得
+const prefectureValues = prefectureList.map((p) => p.value);
 
 // 姓名共通パターン
 // 日本語・英字・数字は許可
@@ -12,9 +11,22 @@ const prefectureValues = prefectureList.map((p) => p.value) as [string, ...strin
 const namePattern =
   /^[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Latin}0-9.\s\-・\uFF0D\u3000]+$/u;
 
-// const trimmedNonEmpty = (label: string) =>
-// z
-//   .pipe(z.string().min(1, messages.required));
+const trimmedNonEmpty = (
+  label: Extract<keyof typeof validationErrorMsg, 'lastName' | 'firstName'>,
+) =>
+  z.string().pipe(
+    z
+      .string()
+      .min(1, validationErrorMsg[label].required)
+      .max(20, validationErrorMsg[label].max)
+      .regex(namePattern, validationErrorMsg[label].pattern)
+      // 全角スペース、半角スペース、改行、タブの入力はエラーとする
+      .refine((s) => !/\s|\n|\t/.test(s), {
+        message: validationErrorMsg[label].notSpace,
+      })
+      // 文字列が含まれていない場合はエラーとする
+      .refine((s) => /\p{L}/u.test(s), { message: validationErrorMsg[label].requireLetter }),
+  );
 
 // 年・月・日が数値であるかどうかをチェック
 // 年・月・日が数値である場合は、日付の妥当性をチェック
@@ -26,79 +38,70 @@ function isValidCalendarDate(year: number, month: number, day: number): boolean 
 
 export const schema = z
   .object({
-    lastName: z
-      .string()
-      .min(1, messages.lastName.required)
-      .max(20, messages.lastName.max)
-      .regex(namePattern, messages.lastName.pattern)
-      // 全角スペース、半角スペース、改行、タブの入力はエラーとする
-      .refine((s) => !/\s|\n|\t/.test(s), {
-        message: messages.lastName.space,
-      })
-      // 全角数字も含む数字のみの入力はエラーとする
-      .refine((s) => !/^\d+$/.test(s), { message: messages.lastName.number })
-      .refine((s) => /\p{L}/u.test(s), { message: messages.lastName.letter }),
-    firstName: z
-      .string()
-      .min(1, messages.firstName.required)
-      .max(20, messages.firstName.max)
-      .regex(namePattern, messages.firstName.pattern)
-      // 全角スペース、半角スペース、改行、タブの入力はエラーとする
-      .refine((s) => !/\s|\n|\t/.test(s), {
-        message: messages.firstName.space,
-      })
-      // 全角数字も含む数字のみの入力はエラーとする
-      .refine((s) => !/^\d+$/.test(s), { message: messages.firstName.number })
-      .refine((s) => /\p{L}/u.test(s), { message: messages.firstName.letter }),
+    lastName: trimmedNonEmpty('lastName'),
+    firstName: trimmedNonEmpty('firstName'),
     gender: z.enum(['male', 'female'], {
-      message: messages.gender.required,
+      message: validationErrorMsg.gender.required,
     }),
     year: z
       .string()
-      .min(1, messages.birthdate.yearRequired)
-      .regex(/^\d{4}$/, '年は4桁の数字で選択してください'),
+      .min(1, validationErrorMsg.year.required)
+      // 4桁の数字以外はエラーとする
+      .regex(/^\d{4}$/, validationErrorMsg.year.invalid),
     month: z
       .string()
-      .min(1, messages.birthdate.monthRequired)
-      .regex(/^(?:[1-9]|1[0-2])$/, messages.birthdate.monthRange),
+      .min(1, validationErrorMsg.month.required)
+      // 1〜12の数字以外はエラーとする
+      .regex(/^(?:[1-9]|1[0-2])$/, validationErrorMsg.month.invalid),
     day: z
       .string()
-      .min(1, messages.birthdate.dayRequired)
-      .regex(/^(?:[1-9]|[12]\d|3[01])$/, messages.birthdate.dayRange),
-    postalCode: trimmedNonEmpty(messages.postalCode.required).pipe(
-      z.string().regex(/^\d{7}$/, messages.postalCode.format),
-    ),
+      .min(1, validationErrorMsg.day.required)
+      // 1〜31の数字以外はエラーとする
+      .regex(/^(?:[1-9]|[12]\d|3[01])$/, validationErrorMsg.day.invalid),
+    postalCode: z
+      .string()
+      .min(1, validationErrorMsg.postalCode.required)
+      .max(7, validationErrorMsg.postalCode.max)
+      .refine((s) => /^[0-9]+$/.test(s), { message: validationErrorMsg.postalCode.invalid }),
     prefecture: z
       .string()
-      .min(1, messages.prefecture.required)
-      .refine((v) => (prefectureValues as readonly string[]).includes(v), {
-        message: messages.prefecture.invalid,
+      .min(1, validationErrorMsg.prefecture.required)
+      // 都道府県リストにない値が入力された場合はエラーとする
+      // TODO: 都道府県リストの型を修正する
+      .refine((v) => prefectureValues.includes(v as (typeof prefectureValues)[number]), {
+        message: validationErrorMsg.prefecture.invalid,
       }),
-    address: trimmedNonEmpty(messages.address.required).pipe(
-      z.string().max(100, messages.address.max),
-    ),
-    email: trimmedNonEmpty(messages.email.required).pipe(
-      z
-        .string()
-        .max(254, messages.email.max)
-        .refine((val) => z.email().safeParse(val).success, {
-          message: messages.email.invalid,
-        }),
-    ),
+    city: z.string().min(1, validationErrorMsg.city.required).max(100, validationErrorMsg.city.max),
+    address1: z
+      .string()
+      .min(1, validationErrorMsg.address1.required)
+      .max(100, validationErrorMsg.address1.max),
+    address2: z.string().max(100, validationErrorMsg.address2.max),
+    email: z
+      .string()
+      .max(254, validationErrorMsg.email.max)
+      // メールアドレスの形式ではない場合はエラーとする
+      .refine((val) => z.email().safeParse(val).success, {
+        message: validationErrorMsg.email.invalid,
+      }),
     password: z
       .string()
-      .min(1, messages.password.required)
-      .max(128, messages.password.max)
-      .refine((val) => val.length >= 8, { message: messages.password.min })
-      .refine((val) => /^[\x20-\x7E]+$/.test(val), { message: messages.password.ascii })
-      .refine((val) => /[A-Z]/.test(val), { message: messages.password.upper })
-      .refine((val) => /[a-z]/.test(val), { message: messages.password.lower })
-      .refine((val) => /[0-9]/.test(val), { message: messages.password.number })
-      .refine((val) => /[^A-Za-z0-9]/.test(val), { message: messages.password.special }),
+      .min(1, validationErrorMsg.password.required)
+      .max(128, validationErrorMsg.password.max)
+      .refine((val) => val.length >= 8, { message: validationErrorMsg.password.min })
+      .refine((val) => /^[\x20-\x7E]+$/.test(val), {
+        message: validationErrorMsg.password.asciiOnly,
+      })
+      .refine((val) => /[A-Z]/.test(val), { message: validationErrorMsg.password.uppercase })
+      .refine((val) => /[a-z]/.test(val), { message: validationErrorMsg.password.lowercase })
+      .refine((val) => /[0-9]/.test(val), { message: validationErrorMsg.password.numeric })
+      .refine((val) => /[^A-Za-z0-9]/.test(val), {
+        message: validationErrorMsg.password.specialChar,
+      }),
     passwordConfirm: z
       .string()
-      .min(1, messages.passwordConfirm.required)
-      .max(128, messages.passwordConfirm.max),
+      .min(1, validationErrorMsg.passwordConfirm.required)
+      .max(128, validationErrorMsg.passwordConfirm.max),
   })
   .superRefine((data, ctx) => {
     const y = Number(data.year);
@@ -109,7 +112,7 @@ export const schema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['day'],
-        message: messages.birthdate.invalid,
+        message: validationErrorMsg.birthdate.invalid,
       });
       return;
     }
@@ -121,18 +124,7 @@ export const schema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['day'],
-        message: messages.birthdate.future,
-      });
-    }
-
-    const oldest = new Date();
-    oldest.setFullYear(oldest.getFullYear() - 120);
-    oldest.setHours(0, 0, 0, 0);
-    if (birth < oldest) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['year'],
-        message: messages.birthdate.tooOld,
+        message: validationErrorMsg.birthdate.future,
       });
     }
 
@@ -140,7 +132,7 @@ export const schema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['passwordConfirm'],
-        message: messages.password.mismatch,
+        message: validationErrorMsg.passwordConfirm.mismatch,
       });
     }
   });
