@@ -1,7 +1,7 @@
-import { schema } from '@/app/(auth)/signup/schema';
+import { signupSchema } from '@/app/(auth)/signup/schema';
 import { z } from 'zod';
 
-export type SignupFormType = z.infer<typeof schema>;
+export type SignupFormType = z.infer<typeof signupSchema>;
 
 export const signupDefaultValues: SignupFormType = {
   firstName: '',
@@ -10,11 +10,6 @@ export const signupDefaultValues: SignupFormType = {
   year: '',
   month: '',
   day: '',
-  postalCode: '',
-  prefecture: '',
-  city: '',
-  address1: '',
-  address2: '',
   email: '',
   password: '',
   passwordConfirm: '',

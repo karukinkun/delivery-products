@@ -1,5 +1,5 @@
 import { LabelField } from '@/components/LabelField';
-import { FieldDescription, FieldError } from '@/components/ui/field';
+import { Field, FieldDescription, FieldError } from '@/components/ui/field';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
 import { ComponentProps, ReactNode } from 'react';
 import { useController, useFormContext, type FieldValues, type Path } from 'react-hook-form';
@@ -38,7 +38,7 @@ export function TextField<TFieldValues extends FieldValues, TName extends Path<T
   const errorId = `error-${field.name}`;
 
   return (
-    <>
+    <Field>
       {label && <LabelField label={label} required={required} htmlFor={formId} />}
       <InputGroup>
         <InputGroupInput
@@ -53,6 +53,6 @@ export function TextField<TFieldValues extends FieldValues, TName extends Path<T
       </InputGroup>
       {description && <FieldDescription>{description}</FieldDescription>}
       {fieldState.error?.message && <FieldError id={errorId} errors={[fieldState.error]} />}
-    </>
+    </Field>
   );
 }

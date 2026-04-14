@@ -10,7 +10,6 @@ type Props<TFieldValues extends FieldValues, TName extends Path<TFieldValues>> =
   label?: string;
   orientation?: 'horizontal' | 'vertical';
   required?: boolean;
-  className?: string;
   options: { label: string; value: string }[];
 } & Omit<ComponentProps<typeof RadioGroup>, 'name' | 'id' | 'value' | 'onValueChange'>;
 
@@ -20,7 +19,6 @@ export function RadioField<TFieldValues extends FieldValues, TName extends Path<
   orientation = 'horizontal',
   required = false,
   options,
-  className,
   ...props
 }: Props<TFieldValues, TName>) {
   const { control } = useFormContext();
@@ -32,7 +30,7 @@ export function RadioField<TFieldValues extends FieldValues, TName extends Path<
   const errorId = `error-${field.name}`;
 
   return (
-    <>
+    <Field>
       {label && <LabelField label={label} required={required} />}
       <RadioGroup
         id={formId}
@@ -56,6 +54,6 @@ export function RadioField<TFieldValues extends FieldValues, TName extends Path<
         </Field>
       </RadioGroup>
       {fieldState.error?.message && <FieldError id={errorId} errors={[fieldState.error]} />}
-    </>
+    </Field>
   );
 }
