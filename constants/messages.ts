@@ -33,12 +33,20 @@ export const pageMsg = {
   },
   authCode: {
     title: '認証コード入力',
+    description: 'メールアドレスに送信された認証コードを入力してください。',
+    resend: 'コードの再送信',
+  },
+  signupComplete: {
+    title: '会員登録完了',
+    description: 'ご登録ありがとうございます。\nアカウントの作成が完了しました。',
   },
 };
 
 export const buttonMsg = {
   back: '前の画面に戻る',
   register: '登録する',
+  authenticate: 'コードを認証する',
+  toTop: 'トップページへ',
 };
 
 // バリデーションエラーのメッセージ
@@ -125,11 +133,16 @@ export const fetchErrorMsg = {
   },
 } as const;
 
-export const signUpErrorMsg = {
+export const authErrorMsg = {
   usernameExists: 'このメールアドレスは既に登録されています。',
   invalidPassword: 'パスワードがポリシーを満たしていません。条件を確認して再度お試しください。',
   invalidParameter: '入力内容に問題があります。内容を確認して再度お試しください。',
   limitExceeded: '試行回数が多すぎます。しばらく時間をおいて再度お試しください。',
   codeDelivery: '確認コードの送信に失敗しました。時間をおいて再度お試しください。',
+  codeMismatch: '認証コードが誤っています。入力内容を確認して再度お試しください。',
+  expiredCode: '認証コードの有効期限が切れています。コードを再送してお試しください。',
+  userNotFound: 'ユーザー情報が見つかりませんでした。最初からやり直してください。',
+  notMailAddress: '送信先のメールアドレスが見つかりませんでした。最初からやり直してください。',
+  notAuthorized: '認証に失敗しました。入力内容を確認して再度お試しください。',
   unknown: '登録に失敗しました。通信状況を確認のうえ、時間をおいて再度お試しください。',
 } as const;

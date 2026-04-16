@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from 'clsx';
+import { authErrorMsg } from 'constants/messages';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
@@ -80,3 +81,36 @@ export const prefectureList = [
   { label: '鹿児島県', value: '鹿児島県' },
   { label: '沖縄県', value: '沖縄県' },
 ];
+
+// Cognito 認証系の処理で返りうる例外名に対応したエラーメッセージを返却
+const cognitoExceptionName = (error: unknown): string | undefined => {
+  if (typeof error !== 'object' || error === null) return undefined;
+  const name = (error as { name?: unknown }).name;
+  return typeof name === 'string' ? name : undefined;
+};
+export const authErrorMessage = (error: unknown): string => {
+  switch (cognitoExceptionName(error)) {
+    case 'UsernameExistsException':
+    case 'AliasExistsException':
+      return authErrorMsg.usernameExists;
+    case 'InvalidPasswordException':
+      return authErrorMsg.invalidPassword;
+    case 'InvalidParameterException':
+      return authErrorMsg.invalidParameter;
+    case 'TooManyRequestsException':
+    case 'LimitExceededException':
+      return authErrorMsg.limitExceeded;
+    case 'CodeDeliveryFailureException':
+      return authErrorMsg.codeDelivery;
+    case 'CodeMismatchException':
+      return authErrorMsg.codeMismatch;
+    case 'ExpiredCodeException':
+      return authErrorMsg.expiredCode;
+    case 'UserNotFoundException':
+      return authErrorMsg.userNotFound;
+    case 'NotAuthorizedException':
+      return authErrorMsg.notAuthorized;
+    default:
+      return authErrorMsg.unknown;
+  }
+};

@@ -5,37 +5,13 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Field, FieldDescription, FieldGroup, FieldLegend } from '@/components/ui/field';
 import { Spinner } from '@/components/ui/spinner';
 import { signupFormStore } from '@/lib/store/signupFormStore';
+import { authErrorMessage } from '@/lib/utils';
 import { signUp } from 'aws-amplify/auth';
-import { buttonMsg, fetchErrorMsg, pageMsg, signUpErrorMsg, words } from 'constants/messages';
+import { buttonMsg, fetchErrorMsg, pageMsg, words } from 'constants/messages';
 import { AlertCircleIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-
-// Cognito signUpで返りうる例外名に対応したエラーメッセージを返却
-const cognitoExceptionName = (error: unknown): string | undefined => {
-  if (typeof error !== 'object' || error === null) return undefined;
-  const name = (error as { name?: unknown }).name;
-  return typeof name === 'string' ? name : undefined;
-};
-const signUpErrorMessage = (error: unknown): string => {
-  switch (cognitoExceptionName(error)) {
-    case 'UsernameExistsException':
-    case 'AliasExistsException':
-      return signUpErrorMsg.usernameExists;
-    case 'InvalidPasswordException':
-      return signUpErrorMsg.invalidPassword;
-    case 'InvalidParameterException':
-      return signUpErrorMsg.invalidParameter;
-    case 'TooManyRequestsException':
-    case 'LimitExceededException':
-      return signUpErrorMsg.limitExceeded;
-    case 'CodeDeliveryFailureException':
-      return signUpErrorMsg.codeDelivery;
-    default:
-      return signUpErrorMsg.unknown;
-  }
-};
 
 const SignUpConfirm = () => {
   const router = useRouter();
@@ -70,7 +46,7 @@ const SignUpConfirm = () => {
     } catch (error) {
       // eslint-disable-next-line no-console -- 例外のスタック追跡用
       console.error(error);
-      setSubmitError(signUpErrorMessage(error));
+      setSubmitError(authErrorMessage(error));
     } finally {
       setIsSubmitting(false);
     }
@@ -132,20 +108,14 @@ const SignUpConfirm = () => {
             </div>
           )}
           <div className="flex flex-col gap-2 sm:flex-row">
-            <Button
-              variant="outline"
-              asChild
-              form="signup-form"
-              className="w-full sm:w-[200px]"
-              disabled={isSubmitting}
-            >
+            <Button variant="outline" asChild disabled={isSubmitting}>
               <Link href="/signup">{buttonMsg.back}</Link>
             </Button>
             <Button
               onClick={onClick}
               form="signup-form"
-              className="relative w-full sm:w-[200px]"
-              disabled={!!(isSubmitting || submitError)}
+              className="relative"
+              disabled={isSubmitting}
             >
               <span className="px-10">{buttonMsg.register}</span>
               {isSubmitting && <Spinner className="absolute top-1/2 right-4 -translate-y-1/2" />}

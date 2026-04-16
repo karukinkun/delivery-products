@@ -37,7 +37,7 @@ const LoginPage = () => {
 
   return (
     <FormProvider {...methods}>
-      <Card className="w-full max-w-sm">
+      <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>ログイン</CardTitle>
         </CardHeader>
