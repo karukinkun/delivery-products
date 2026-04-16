@@ -1,5 +1,5 @@
 import Loading from '@/app/loading';
-import ProductList from '@/app/ProductList';
+import ProductList from '@/app/products/ProductList';
 import SearchForm from '@/app/SearchForm';
 import { Suspense } from 'react';
 

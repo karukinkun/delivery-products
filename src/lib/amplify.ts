@@ -12,6 +12,8 @@ if (userPoolId && userPoolClientId) {
       },
     },
   });
+
+  console.log('[Amplify] Cognito の環境変数が設定されています。', userPoolId, userPoolClientId);
 } else if (process.env.NODE_ENV === 'development') {
   // eslint-disable-next-line no-console -- 未設定時に原因を特定しやすくする
   console.error(

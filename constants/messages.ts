@@ -1,5 +1,6 @@
 export const words = {
   required: '必須',
+  name: '名前',
   lastName: '姓',
   firstName: '名',
   gender: '性別',
@@ -9,19 +10,35 @@ export const words = {
   month: '月',
   day: '日',
   birthdate: '生年月日',
+  address: '住所',
   postalCode: '郵便番号',
   prefecture: '都道府県',
-  city: '市区町村',
-  address1: '番地',
-  address2: '建物名・部屋番号',
+  address2: '市区町村',
+  address3: '番地',
+  address4: '建物名・部屋番号',
   email: 'メールアドレス',
   password: 'パスワード',
   passwordConfirm: 'パスワード確認',
-  signup: '新規会員登録',
+};
+
+export const pageMsg = {
+  login: {
+    title: 'ログイン',
+  },
+  signup: {
+    title: '新規会員登録',
+  },
+  signupConfirm: {
+    title: '新規会員登録確認',
+  },
+  authCode: {
+    title: '認証コード入力',
+  },
 };
 
 export const buttonMsg = {
   back: '前の画面に戻る',
+  register: '登録する',
 };
 
 // バリデーションエラーのメッセージ
@@ -68,16 +85,15 @@ export const validationErrorMsg = {
     required: `${words.prefecture}を選択してください`,
     invalid: `存在しない${words.prefecture}は無効です`,
   },
-  city: {
-    required: `${words.city}を入力してください`,
-    max: `${words.city}は100文字以内で入力してください`,
-  },
-  address1: {
-    required: `${words.address1}を入力してください`,
-    max: `${words.address1}は100文字以内で入力してください`,
-  },
   address2: {
+    required: `${words.address2}を入力してください`,
     max: `${words.address2}は100文字以内で入力してください`,
+  },
+  address3: {
+    max: `${words.address3}は100文字以内で入力してください`,
+  },
+  address4: {
+    max: `${words.address4}は100文字以内で入力してください`,
   },
   email: {
     required: `${words.email}を入力してください`,
@@ -103,7 +119,17 @@ export const validationErrorMsg = {
 
 // フェッチエラーのメッセージ
 export const fetchErrorMsg = {
+  title: 'エラーが発生しました。',
   postalCode: {
     failure: '郵便番号から住所情報の取得に失敗しました',
   },
-};
+} as const;
+
+export const signUpErrorMsg = {
+  usernameExists: 'このメールアドレスは既に登録されています。',
+  invalidPassword: 'パスワードがポリシーを満たしていません。条件を確認して再度お試しください。',
+  invalidParameter: '入力内容に問題があります。内容を確認して再度お試しください。',
+  limitExceeded: '試行回数が多すぎます。しばらく時間をおいて再度お試しください。',
+  codeDelivery: '確認コードの送信に失敗しました。時間をおいて再度お試しください。',
+  unknown: '登録に失敗しました。通信状況を確認のうえ、時間をおいて再度お試しください。',
+} as const;

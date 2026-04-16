@@ -1,14 +1,13 @@
 'use client';
 
 import { schema } from '@/app/(auth)/authCode/schema';
-import { TextField } from '@/components/TextField';
+import { TextField } from '@/components/common/text-field';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Field, FieldGroup } from '@/components/ui/field';
-import { AuthCodeFormType } from '@/lib/form/authCodeForm';
+import { Field, FieldSet } from '@/components/ui/field';
+import { AuthCodeFormType } from '@/lib/form/auth-code-form';
 import { signupFormStore } from '@/lib/store/signupFormStore';
 import { zodResolver } from '@hookform/resolvers/zod';
-
 import { confirmSignUp, resendSignUpCode } from 'aws-amplify/auth';
 import { useRouter } from 'next/navigation';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
@@ -67,11 +66,11 @@ const AuthCodePage = () => {
         <CardContent>
           <p>メールアドレスに送信された認証コードを入力してください。</p>
           <form noValidate id="authCode-form" onSubmit={methods.handleSubmit(onSubmit)}>
-            <FieldGroup>
+            <FieldSet className="flex gap-6">
               <Field>
                 <TextField name="confirmationCode" />
               </Field>
-            </FieldGroup>
+            </FieldSet>
           </form>
         </CardContent>
         <CardFooter className="flex">

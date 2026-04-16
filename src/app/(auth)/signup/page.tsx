@@ -1,10 +1,10 @@
 'use client';
 
 import { signupSchema } from '@/app/(auth)/signup/schema';
-import AddressForm from '@/app/AddressForm';
-import { RadioField } from '@/components/RadioField';
-import { SelectField } from '@/components/SelectField';
-import { TextField } from '@/components/TextField';
+import { RadioField } from '@/components/common/radio-field';
+import { SelectField } from '@/components/common/select-field';
+import { TextField } from '@/components/common/text-field';
+import AddressForm from '@/components/form/AddressForm';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { FieldGroup, FieldSet } from '@/components/ui/field';
@@ -13,7 +13,7 @@ import { SignupFormType } from '@/lib/form/signupForm';
 import { signupFormStore } from '@/lib/store/signupFormStore';
 import { dayList, monthList, yearList } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { buttonMsg, words } from 'constants/messages';
+import { buttonMsg, pageMsg, words } from 'constants/messages';
 import { useRouter } from 'next/navigation';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 
@@ -22,7 +22,8 @@ const genderOptions = [
   { label: words.female, value: 'female' },
 ];
 
-const currentYear = new Date().getFullYear();
+// const currentYear = new Date().getFullYear();
+const currentYear = 2020;
 
 const SignUpPage = () => {
   const router = useRouter();
@@ -32,8 +33,9 @@ const SignUpPage = () => {
     resolver: zodResolver(signupSchema),
     defaultValues: form,
   });
+  const { handleSubmit } = methods;
 
-  const onSubmit: SubmitHandler<SignupFormType> = (data) => {
+  const onSubmit: SubmitHandler<SignupFormType & AddressFormType> = (data) => {
     setForm(data); // Zustand にフォーム情報を保存
 
     // 会員登録確認ページへ遷移
@@ -50,27 +52,15 @@ const SignUpPage = () => {
       <Card className="w-full max-w-lg">
         <CardHeader>
           <CardTitle>
-            <h1>{words.signup}</h1>
+            <h1>{pageMsg.signup.title}</h1>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <form noValidate id="signup-form" onSubmit={methods.handleSubmit(onSubmit)}>
+          <form noValidate id="signup-form" onSubmit={handleSubmit(onSubmit)}>
             <FieldSet className="flex gap-6">
               <FieldGroup role="group" className="flex flex-row gap-5">
-                <TextField
-                  name="lastName"
-                  label={words.lastName}
-                  required
-                  placeholder="山田"
-                  maxLength={20}
-                />
-                <TextField
-                  name="firstName"
-                  label={words.firstName}
-                  required
-                  placeholder="太郎"
-                  maxLength={20}
-                />
+                <TextField name="lastName" label={words.lastName} required placeholder="山田" />
+                <TextField name="firstName" label={words.firstName} required placeholder="太郎" />
               </FieldGroup>
               <RadioField name="gender" label={words.gender} required options={genderOptions} />
               <FieldGroup role="group" className="flex flex-row">

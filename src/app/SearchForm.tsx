@@ -1,6 +1,6 @@
 'use client';
 
-import { TextField } from '@/components/TextField';
+import { TextField } from '@/components/common/text-field';
 import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field';
 import { SearchIcon } from 'lucide-react';

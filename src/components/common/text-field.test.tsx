@@ -10,7 +10,7 @@
 //   InputGroupAddon: ({ children }: any) => <div>{children}</div>,
 // }));
 
-import { TextField } from '@/components/TextField';
+import { TextField } from '@/components/common/text-field';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Controller, ControllerFieldState, useForm } from 'react-hook-form';

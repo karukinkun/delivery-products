@@ -6,7 +6,6 @@ export type AddressFormType = z.infer<typeof addressSchema>;
 export const addressDefaultValues: AddressFormType = {
   postalCode: '',
   prefecture: '',
-  city: '',
-  address1: '',
   address2: '',
+  address3: '',
 };

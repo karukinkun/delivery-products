@@ -1,7 +1,7 @@
 'use client';
 
-import { SelectField } from '@/components/SelectField';
-import { TextField } from '@/components/TextField';
+import { SelectField } from '@/components/common/select-field';
+import { TextField } from '@/components/common/text-field';
 import { FieldGroup } from '@/components/ui/field';
 import { getAddressApi } from '@/lib/api/address';
 import { prefectureList } from '@/lib/utils';
@@ -10,7 +10,7 @@ import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
 const AddressForm = () => {
-  const { setValue, setError, resetField, trigger } = useFormContext();
+  const { setValue, setError, resetField } = useFormContext();
 
   // watchだとフォーム値が変更時に際レンダリングされるため useWatchを使用する
   const postalCode = useWatch({ name: 'postalCode' });
@@ -29,7 +29,11 @@ const AddressForm = () => {
           shouldValidate: true,
           shouldDirty: true,
         });
-        setValue('city', response.address2 + response.address3, {
+        setValue('address2', response.address2, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+        setValue('address3', response.address3, {
           shouldValidate: true,
           shouldDirty: true,
         });
@@ -60,34 +64,30 @@ const AddressForm = () => {
           maxLength={7}
           autoComplete="postal-code"
           onChange={(e) => {
-            console.log('onChange');
-            console.log(e.target.value);
             // 数字以外除去
             const value = e.target.value.replace(/\D/g, '').slice(0, 7);
             setValue('postalCode', value);
-            // 郵便番号のバリデーションを実行
-            trigger('postalCode');
           }}
         />
         <SelectField name="prefecture" options={prefectureList} label={words.prefecture} required />
       </div>
       <TextField
-        name="city"
-        label={words.city}
+        name="address2"
+        label={words.address2}
         required
         maxLength={100}
         autoComplete="address-level2"
       />
       <TextField
-        name="address1"
-        label={words.address1}
+        name="address3"
+        label={words.address3}
         required
         maxLength={100}
         autoComplete="address-line1"
       />
       <TextField
-        name="address2"
-        label={words.address2}
+        name="address4"
+        label={words.address4}
         maxLength={100}
         autoComplete="address-line2"
       />

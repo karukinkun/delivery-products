@@ -1,4 +1,4 @@
-import { LabelField } from '@/components/LabelField';
+import { LabelField } from '@/components/common/label-field';
 import { Field, FieldError } from '@/components/ui/field';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';

@@ -3,7 +3,7 @@ import CartProduct from '@/app/cart/CartProduct';
 import { Button } from '@/components/ui/button';
 import { Card, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { getUserInfoApi } from '@/lib/api/auth';
-import { Link } from 'lucide-react';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 const CartsPage = () => {

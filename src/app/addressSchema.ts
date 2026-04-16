@@ -19,10 +19,7 @@ export const addressSchema = z.object({
     .refine((v) => prefectureValues.includes(v as (typeof prefectureValues)[number]), {
       message: validationErrorMsg.prefecture.invalid,
     }),
-  city: z.string().min(1, validationErrorMsg.city.required).max(100, validationErrorMsg.city.max),
-  address1: z
-    .string()
-    .min(1, validationErrorMsg.address1.required)
-    .max(100, validationErrorMsg.address1.max),
   address2: z.string().max(100, validationErrorMsg.address2.max),
+  address3: z.string().max(100, validationErrorMsg.address3.max),
+  address4: z.string().max(100, validationErrorMsg.address4.max),
 });

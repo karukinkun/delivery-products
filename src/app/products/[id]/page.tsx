@@ -1,6 +1,6 @@
 import Loading from '@/app/loading';
 import { AddToCartButton } from '@/app/products/[id]/AddToCartButton';
-import { ProductRating } from '@/components/ProductRating';
+import { ProductRating } from '@/components/common/product-rating';
 import { Button } from '@/components/ui/button';
 import { getProductDetailApi } from '@/lib/api/product';
 import { Product } from '@/types/product';

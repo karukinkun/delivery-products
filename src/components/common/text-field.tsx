@@ -1,4 +1,4 @@
-import { LabelField } from '@/components/LabelField';
+import { LabelField } from '@/components/common/label-field';
 import { Field, FieldDescription, FieldError } from '@/components/ui/field';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
 import { ComponentProps, ReactNode } from 'react';

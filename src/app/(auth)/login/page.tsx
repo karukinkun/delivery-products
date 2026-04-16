@@ -1,11 +1,10 @@
 'use client';
 
-import { TextField } from '@/components/TextField';
+import { TextField } from '@/components/common/text-field';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Field, FieldGroup } from '@/components/ui/field';
+import { FieldSet } from '@/components/ui/field';
 import { InputGroupButton } from '@/components/ui/input-group';
-import { loginApi } from '@/lib/api/auth';
 import { EyeOffIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -22,19 +21,18 @@ const LoginPage = () => {
   const [isShownPassword, setIsShownPassword] = useState<boolean>(false);
   const methods = useForm<FormType>({
     defaultValues: {
-      // 開発時のみ初期値設定
       username: '',
       password: '',
     },
     mode: 'onSubmit',
     reValidateMode: 'onChange',
   });
+  const { handleSubmit } = methods;
 
   const onSubmit: SubmitHandler<FormType> = async (data) => {
-    const res = await loginApi(data.username, data.password);
-    localStorage.setItem('accessToken', res.accessToken);
-
-    router.push('/');
+    console.log(data);
+    console.log('ログイン');
+    // router.push('/');
   };
 
   return (
@@ -44,29 +42,25 @@ const LoginPage = () => {
           <CardTitle>ログイン</CardTitle>
         </CardHeader>
         <CardContent>
-          <form noValidate id="login-form" onSubmit={methods.handleSubmit(onSubmit)}>
-            <FieldGroup>
-              <Field>
-                <TextField name="username" label="ユーザー名" />
-              </Field>
-              <Field>
-                <TextField
-                  name="password"
-                  type={isShownPassword ? 'text' : 'password'}
-                  label="パスワード"
-                  autoComplete="off"
-                  icon={
-                    <InputGroupButton
-                      size="icon-xs"
-                      onClick={() => setIsShownPassword((prev) => !prev)}
-                    >
-                      <EyeOffIcon />
-                    </InputGroupButton>
-                  }
-                  iconAlign="inline-end"
-                />
-              </Field>
-            </FieldGroup>
+          <form noValidate id="login-form" onSubmit={handleSubmit(onSubmit)}>
+            <FieldSet className="flex gap-6">
+              <TextField name="username" label="ユーザー名" />
+              <TextField
+                name="password"
+                type={isShownPassword ? 'text' : 'password'}
+                label="パスワード"
+                autoComplete="off"
+                icon={
+                  <InputGroupButton
+                    size="icon-xs"
+                    onClick={() => setIsShownPassword((prev) => !prev)}
+                  >
+                    <EyeOffIcon />
+                  </InputGroupButton>
+                }
+                iconAlign="inline-end"
+              />
+            </FieldSet>
           </form>
         </CardContent>
         <CardFooter className="flex-col gap-2">
