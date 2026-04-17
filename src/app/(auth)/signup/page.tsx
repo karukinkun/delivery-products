@@ -110,7 +110,12 @@ const SignUpPage = () => {
             >
               {buttonMsg.back}
             </Button>
-            <Button type="submit" form="signup-form" className="w-full sm:w-[180px]">
+            <Button
+              type="submit"
+              form="signup-form"
+              className="w-full sm:w-[180px]"
+              variant="secondary"
+            >
               確認画面に進む
             </Button>
           </div>

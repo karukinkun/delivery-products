@@ -28,7 +28,6 @@ export function TextField<TFieldValues extends FieldValues, TName extends Path<T
   ...props
 }: Props<TFieldValues, TName>) {
   const { control } = useFormContext();
-
   const { field, fieldState } = useController({
     name,
     control,
