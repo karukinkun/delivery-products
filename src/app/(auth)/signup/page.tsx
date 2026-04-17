@@ -22,8 +22,8 @@ const genderOptions = [
   { label: words.female, value: 'female' },
 ];
 
-// const currentYear = new Date().getFullYear();
-const currentYear = 2020;
+const currentYear = new Date().getFullYear();
+// const currentYear = 2020;
 
 const SignUpPage = () => {
   const router = useRouter();

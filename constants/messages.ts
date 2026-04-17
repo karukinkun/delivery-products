@@ -123,7 +123,7 @@ export const validationErrorMsg = {
     max: `${words.passwordConfirm}は128文字以内で入力してください`,
     mismatch: `${words.password}と${words.passwordConfirm}が不一致です`,
   },
-};
+} as const;
 
 // フェッチエラーのメッセージ
 export const fetchErrorMsg = {

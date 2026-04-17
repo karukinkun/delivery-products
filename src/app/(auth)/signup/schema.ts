@@ -6,7 +6,7 @@ import { z } from 'zod';
 // 日本語・英字・数字は許可
 // 一般的な姓名用記号（半角カタカナ・半角全角スペース・半角全角ハイフン・全角ドット）は許可
 const namePattern =
-  /^[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Latin}0-9.\s\-・\uFF0D\u3000]+$/u;
+  /^[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Latin}0-9.\s\-・\uFF0D\u3000ー]+$/u;
 
 const trimmedNonEmpty = (
   label: Extract<keyof typeof validationErrorMsg, 'lastName' | 'firstName'>,
@@ -97,11 +97,11 @@ export const signupSchema = z
 
     const birth = new Date(y, m - 1, d);
     const today = new Date();
-    today.setHours(23, 59, 59, 999);
+    today.setHours(0, 0, 0, 0);
     if (birth > today) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        path: ['day'],
+        path: ['year'],
         message: validationErrorMsg.birthdate.future,
       });
     }
@@ -115,5 +115,3 @@ export const signupSchema = z
     }
   })
   .extend(addressSchema.shape);
-
-// export const signupSchema = schema.extend(addressSchema.shape);
