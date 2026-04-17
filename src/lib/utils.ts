@@ -1,10 +1,16 @@
 import { clsx, type ClassValue } from 'clsx';
-import { authErrorMsg } from 'constants/messages';
+import { authErrorMsg, words } from 'constants/messages';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+export const genderOptions = [
+  { label: words.male, value: 'male' },
+  { label: words.female, value: 'female' },
+  { label: words.other, value: 'other' },
+] as const;
 
 // 年月日のリスト
 const createYearList = (start: number, end: number) => {
@@ -80,7 +86,7 @@ export const prefectureList = [
   { label: '宮崎県', value: '宮崎県' },
   { label: '鹿児島県', value: '鹿児島県' },
   { label: '沖縄県', value: '沖縄県' },
-];
+] as const;
 
 // Cognito 認証系の処理で返りうる例外名に対応したエラーメッセージを返却
 const cognitoExceptionName = (error: unknown): string | undefined => {

@@ -44,7 +44,6 @@ module.exports = {
     'no-console': 'warn',
     'no-debugger': 'error',
     'no-unused-vars': 'off',
-
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
 
     // ===== コーディング規約 =====
@@ -60,6 +59,7 @@ module.exports = {
     //   },
     // ],
 
+    'react/prop-types': 'off',
     'prefer-const': 'error',
     'no-var': 'error',
     'object-shorthand': 'error',

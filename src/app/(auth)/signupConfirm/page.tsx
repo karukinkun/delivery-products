@@ -29,7 +29,7 @@ const SignUpConfirm = () => {
         options: {
           userAttributes: {
             email: form.email,
-            // TODO: 下記DBのユーザーテーブルに登録する
+            // TODO: 下記情報はユーザー登録後にPostgreSQLのユーザーテーブルに登録する
             // name: `${form.lastName} ${form.firstName}`,
             // gender: form.gender,
             // birthdate: `${form.year}-${form.month.padStart(2, '0')}-${form.day.padStart(2, '0')}`,

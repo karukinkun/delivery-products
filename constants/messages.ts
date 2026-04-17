@@ -6,6 +6,7 @@ export const words = {
   gender: '性別',
   male: '男性',
   female: '女性',
+  other: '未回答',
   year: '年',
   month: '月',
   day: '日',

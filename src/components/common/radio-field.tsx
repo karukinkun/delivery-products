@@ -5,12 +5,21 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { ComponentProps } from 'react';
 import { useController, useFormContext, type FieldValues, type Path } from 'react-hook-form';
 
-type Props<TFieldValues extends FieldValues, TName extends Path<TFieldValues>> = {
+type RadioOption<TLabel extends string = string, TValue = string> = {
+  label: TLabel;
+  value: TValue;
+};
+type Props<
+  TFieldValues extends FieldValues,
+  TName extends Path<TFieldValues>,
+  TLabel extends string = string,
+  TValue = string,
+> = {
   name: TName;
   label?: string;
   orientation?: 'horizontal' | 'vertical';
   required?: boolean;
-  options: { label: string; value: string }[];
+  options: readonly RadioOption<TLabel, TValue>[];
 } & Omit<ComponentProps<typeof RadioGroup>, 'name' | 'id' | 'value' | 'onValueChange'>;
 
 export function RadioField<TFieldValues extends FieldValues, TName extends Path<TFieldValues>>({

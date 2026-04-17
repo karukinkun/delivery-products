@@ -11,16 +11,11 @@ import { FieldGroup, FieldSet } from '@/components/ui/field';
 import { AddressFormType } from '@/lib/form/addressForm';
 import { SignupFormType } from '@/lib/form/signupForm';
 import { signupFormStore } from '@/lib/store/signupFormStore';
-import { dayList, monthList, yearList } from '@/lib/utils';
+import { dayList, genderOptions, monthList, yearList } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { buttonMsg, pageMsg, words } from 'constants/messages';
 import { useRouter } from 'next/navigation';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
-
-const genderOptions = [
-  { label: words.male, value: 'male' },
-  { label: words.female, value: 'female' },
-];
 
 const currentYear = new Date().getFullYear();
 // const currentYear = 2020;
@@ -110,7 +105,12 @@ const SignUpPage = () => {
             >
               {buttonMsg.back}
             </Button>
-            <Button type="submit" form="signup-form" className="w-full sm:w-[180px]">
+            <Button
+              type="submit"
+              form="signup-form"
+              className="w-full sm:w-[180px]"
+              variant="secondary"
+            >
               確認画面に進む
             </Button>
           </div>
