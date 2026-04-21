@@ -23,7 +23,6 @@ const genderOptions = [
 ];
 
 const currentYear = new Date().getFullYear();
-// const currentYear = 2020;
 
 const SignUpPage = () => {
   const router = useRouter();

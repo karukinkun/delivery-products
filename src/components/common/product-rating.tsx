@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { id } from 'zod/locales';
 
 type PropsType = {
-  id: string;
+  id: number;
   rating: number;
   className?: string;
   /** 星1個の Tailwind サイズクラス（例: size-4） */
@@ -13,7 +13,7 @@ type PropsType = {
 export const ProductRating = (props: PropsType) => {
   const { rating, className, starSizeClass = 'size-5' } = props;
   const safeMax = Math.max(1, 5);
-  const clamped = Math.min(Math.max(Math.round(rating), 0), safeMax);
+  const clamped = Math.min(Math.max(rating, 0), safeMax);
 
   return (
     <div
@@ -21,7 +21,7 @@ export const ProductRating = (props: PropsType) => {
       role="img"
       aria-label={`評価 ${clamped.toFixed(1)} / ${safeMax}`}
     >
-      <Link href={`/products/${id}/reviews`}>
+      <Link href={`/products/${id}/reviews`} className="flex">
         {Array.from({ length: safeMax }, (_, i) => {
           const fillRatio = Math.min(Math.max(clamped - i, 0), 1);
           return (

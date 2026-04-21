@@ -1,0 +1,13 @@
+/* Swiper領域を親コンテナいっぱいに広げる */
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+/* Next/Image の fill を効かせるため relative + 高さを確保 */
+.slide {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+

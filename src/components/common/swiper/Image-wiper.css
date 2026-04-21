@@ -1,0 +1,19 @@
+/* ページネーションの矢印アイコン */
+.swiper-button-prev svg,
+.swiper-button-next svg {
+  stroke: #666;
+  width: 40px;
+  height: 40px;
+}
+
+.image-swiper-thumbs .swiper-slide {
+  opacity: 0.45;
+}
+
+.image-swiper-thumbs .swiper-slide-thumb-active {
+  opacity: 1;
+}
+
+.image-swiper-thumbs .swiper-slide-thumb-active > div {
+  border: 2px solid #6f9654;
+}
