@@ -8,7 +8,8 @@ export async function getProductsApi(
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_ORIGIN}/products?word=${word}&limit=${limit}&page=${page}`,
     {
-      next: { revalidate: 60 }, // 60秒ごとにキャッシュを更新
+      next: word ? undefined : { revalidate: 60 }, // 60秒ごとにデータのキャッシュを更新
+      cache: word ? 'no-store' : 'force-cache', // 検索でのデータ取得の場合はキャッシュを最新情報に更新
     },
   );
 
@@ -23,8 +24,7 @@ export async function getProductsApi(
 
 export async function getProductDetailApi(id: number): Promise<ProductType> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_ORIGIN}/products/${id}`, {
-    // next: { revalidate: 60 }, // 60秒ごとにキャッシュを更新
-    cache: 'no-store',
+    next: { revalidate: 60 }, // 60秒ごとにキャッシュを更新
   });
 
   if (!res.ok) {
