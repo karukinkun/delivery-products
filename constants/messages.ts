@@ -18,14 +18,14 @@ export const words = {
   address3: '番地',
   address4: '建物名・部屋番号',
   email: 'メールアドレス',
+  phoneNumber: '電話番号',
   password: 'パスワード',
   passwordConfirm: 'パスワード確認',
+  login: 'ログイン',
+  username: 'ユーザー名',
 };
 
 export const pageMsg = {
-  login: {
-    title: 'ログイン',
-  },
   signup: {
     title: '新規会員登録',
   },
@@ -44,9 +44,14 @@ export const pageMsg = {
 };
 
 export const buttonMsg = {
-  back: '前の画面に戻る',
+  back: '前のページに戻る',
+  toConfirm: '確認画面に進む',
+  toSignup: '新規会員登録はこちら',
+  toPasswordReset: 'パスワードを忘れた方はこちら',
+  resendAuthCode: '認証コードの再送信',
   register: '登録する',
   authenticate: 'コードを認証する',
+  toProducts: '商品一覧ページへ',
   toTop: 'トップページへ',
 };
 
@@ -109,6 +114,11 @@ export const validationErrorMsg = {
     max: `${words.email}は254文字以内で入力してください`,
     invalid: `${words.email}の形式が正しくありません`,
   },
+  phoneNumber: {
+    required: `${words.phoneNumber}を入力してください`,
+    max: `${words.phoneNumber}は11文字以内で入力してください`,
+    invalid: `${words.phoneNumber}は数字以外は使用できません`,
+  },
   password: {
     required: `${words.password}を入力してください`,
     min: `${words.password}は8文字以上で入力してください`,
@@ -140,10 +150,16 @@ export const authErrorMsg = {
   invalidParameter: '入力内容に問題があります。内容を確認して再度お試しください。',
   limitExceeded: '試行回数が多すぎます。しばらく時間をおいて再度お試しください。',
   codeDelivery: '確認コードの送信に失敗しました。時間をおいて再度お試しください。',
+  userNotConfirmed:
+    '認証コードの入力が完了していません。会員情報登録を始めからやり直してください。',
   codeMismatch: '認証コードが誤っています。入力内容を確認して再度お試しください。',
   expiredCode: '認証コードの有効期限が切れています。コードを再送してお試しください。',
   userNotFound: 'ユーザー情報が見つかりませんでした。最初からやり直してください。',
   notMailAddress: '送信先のメールアドレスが見つかりませんでした。最初からやり直してください。',
   notAuthorized: '認証に失敗しました。入力内容を確認して再度お試しください。',
+  alreadyAuthenticated: '既にログインしているユーザーです。',
+  passwordResetRequired: 'パスワードをリセットする必要があります。',
+  InternalError: '現在この認証方法は利用できません。時間をおいて再度お試しください。',
+  authenticationRequired: '追加の認証が必要です。5秒後に認証コード確認画面へ遷移します。',
   unknown: '登録に失敗しました。通信状況を確認のうえ、時間をおいて再度お試しください。',
 } as const;

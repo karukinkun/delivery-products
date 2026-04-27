@@ -37,7 +37,7 @@ export const signupSchema = z
   .object({
     lastName: trimmedNonEmpty('lastName'),
     firstName: trimmedNonEmpty('firstName'),
-    gender: z.enum(['male', 'female'], {
+    gender: z.enum(['male', 'female', 'other'], {
       message: validationErrorMsg.gender.required,
     }),
     year: z
@@ -62,6 +62,11 @@ export const signupSchema = z
       .refine((val) => z.email().safeParse(val).success, {
         message: validationErrorMsg.email.invalid,
       }),
+    phoneNumber: z
+      .string()
+      .min(1, validationErrorMsg.phoneNumber.required)
+      .max(11, validationErrorMsg.phoneNumber.max)
+      .refine((s) => /^[0-9]+$/.test(s), { message: validationErrorMsg.phoneNumber.invalid }),
     password: z
       .string()
       .min(1, validationErrorMsg.password.required)

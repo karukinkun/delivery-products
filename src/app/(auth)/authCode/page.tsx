@@ -1,26 +1,29 @@
 'use client';
 
 import { schema } from '@/app/(auth)/authCode/schema';
+import { ErrorAlert } from '@/components/common/error-alert';
 import { TextField } from '@/components/common/text-field';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldSet } from '@/components/ui/field';
 import { Spinner } from '@/components/ui/spinner';
+import { autoSignInApi, confirmSignUpApi, resendSignUpCodeApi } from '@/lib/api/auth';
 import { AuthCodeFormType } from '@/lib/form/auth-code-form';
+import { loadingStore } from '@/lib/store/loadingStore';
 import { signupFormStore } from '@/lib/store/signupFormStore';
-import { authErrorMessage } from '@/lib/utils';
+import { authErrorMessage, cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { confirmSignUp, resendSignUpCode } from 'aws-amplify/auth';
-import { authErrorMsg, buttonMsg, fetchErrorMsg, pageMsg } from 'constants/messages';
-import { AlertCircleIcon } from 'lucide-react';
+import { buttonMsg, pageMsg } from 'constants/messages';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 
 const AuthCodePage = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const from = searchParams.get('from');
+  const isLoading = loadingStore((state) => state.isLoading);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const router = useRouter();
   const { form, clearForm } = signupFormStore();
   const methods = useForm<AuthCodeFormType>({
@@ -29,45 +32,50 @@ const AuthCodePage = () => {
       confirmationCode: '',
     },
     mode: 'onSubmit',
-    reValidateMode: 'onBlur',
   });
-  const { setValue } = methods;
+  const {
+    handleSubmit,
+    setValue,
+    formState: { isSubmitting },
+  } = methods;
 
   const onSubmit: SubmitHandler<AuthCodeFormType> = async (data) => {
-    setSubmitError(null);
-    setIsSubmitting(true);
+    setFetchError(null);
     try {
-      await confirmSignUp({
-        username: form.email,
+      const result = await confirmSignUpApi({
+        email: form.email,
         confirmationCode: data.confirmationCode,
       });
 
-      // Zustand のフォーム情報をクリア
+      // ユーザーフォームのZustand（状態管理） 完全にクリア
       clearForm();
-      router.push('/signupComplete');
+
+      // 認証コードの確認が完了したら自動サインインを行う
+      if (result.nextStep.signUpStep === 'COMPLETE_AUTO_SIGN_IN') {
+        const signInResult = await autoSignInApi();
+        if (signInResult.nextStep.signInStep !== 'DONE') {
+          router.replace('/login');
+          return;
+        }
+      }
+      router.replace('/signupComplete');
+      return;
     } catch (error) {
       // eslint-disable-next-line no-console -- 例外のスタック追跡用
       console.error(error);
-      setSubmitError(authErrorMessage(error));
-    } finally {
-      setIsSubmitting(false);
+      setFetchError(authErrorMessage(error));
     }
   };
 
   // コードの再送信
   const onResendCode = async () => {
-    setSubmitError(null);
-    setIsSubmitting(true);
+    setFetchError(null);
     try {
-      await resendSignUpCode({
-        username: form.email,
-      });
+      await resendSignUpCodeApi({ email: form.email });
     } catch (error) {
       // eslint-disable-next-line no-console -- 例外のスタック追跡用
       console.error(error);
-      setSubmitError(authErrorMessage(error));
-    } finally {
-      setIsSubmitting(false);
+      setFetchError(authErrorMessage(error));
     }
   };
 
@@ -78,71 +86,53 @@ const AuthCodePage = () => {
           <CardTitle>{pageMsg.authCode.title}</CardTitle>
         </CardHeader>
         <CardContent>
-          {!form.email ? (
-            <div className="text-destructive flex gap-2">
-              <AlertCircleIcon />
-              <div>
-                <p role="alert" className="mb-4">
-                  {fetchErrorMsg.title}
-                </p>
-                <p role="alert">{authErrorMsg.notMailAddress}</p>
-              </div>
-            </div>
-          ) : (
-            <>
-              <p className="mb-4">{pageMsg.authCode.description}</p>
-              <form noValidate id="authCode-form" onSubmit={methods.handleSubmit(onSubmit)}>
-                <FieldSet className="flex flex-row items-center gap-2">
-                  <Field>
-                    <TextField
-                      name="confirmationCode"
-                      inputMode="numeric"
-                      maxLength={7}
-                      onChange={(e) => {
-                        // 数字以外除去
-                        const value = e.target.value.replace(/\D/g, '').slice(0, 7);
-                        setValue('confirmationCode', value);
-                      }}
-                    />
-                  </Field>
-                  <Field className="w-[160px]">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={onResendCode}
-                      className="w-full"
-                    >
-                      {pageMsg.authCode.resend}
-                    </Button>
-                  </Field>
-                </FieldSet>
-              </form>
-            </>
-          )}
+          <p className="mb-4">{pageMsg.authCode.description}</p>
+          <form noValidate id="authCode-form" onSubmit={handleSubmit(onSubmit)}>
+            <FieldSet className="flex flex-row items-center gap-2">
+              <Field>
+                <TextField
+                  name="confirmationCode"
+                  inputMode="numeric"
+                  maxLength={7}
+                  onChange={(e) => {
+                    // 数字以外除去
+                    const value = e.target.value.replace(/\D/g, '').slice(0, 7);
+                    setValue('confirmationCode', value);
+                  }}
+                />
+              </Field>
+              <Field className="w-[290px]">
+                <Button
+                  type="button"
+                  variant="primary"
+                  onClick={onResendCode}
+                  className="w-full"
+                  disabled={isLoading}
+                >
+                  {pageMsg.authCode.resend}
+                </Button>
+              </Field>
+            </FieldSet>
+          </form>
         </CardContent>
         <CardFooter className="flex">
           <div className="flex w-full flex-col gap-2">
-            {submitError && (
-              <div className="text-destructive flex gap-2">
-                <AlertCircleIcon />
-                <div>
-                  <p role="alert">{fetchErrorMsg.title}</p>
-                  <p role="alert">{submitError}</p>
-                </div>
-              </div>
-            )}
+            {fetchError && <ErrorAlert fetchErrorMessage={fetchError} />}
             <div className="flex flex-col gap-2 sm:flex-row">
-              <Button variant="outline" asChild disabled={isSubmitting}>
-                <Link href="/signupConfirm">{buttonMsg.back}</Link>
+              <Button variant="outline" type="button" asChild disabled={isLoading}>
+                <Link
+                  href={from === 'login' ? '/signupConfirm' : '/login'}
+                  aria-disabled={isLoading}
+                  className={cn(isLoading && 'pointer-events-none opacity-50')}
+                >
+                  {buttonMsg.back}
+                </Link>
               </Button>
-              <Button
-                type="submit"
-                form="authCode-form"
-                className="relative"
-                disabled={isSubmitting}
-              >
+              <Button type="submit" form="authCode-form" className="relative" disabled={isLoading}>
                 <span className="px-10">{buttonMsg.authenticate}</span>
-                {isSubmitting && <Spinner className="absolute top-1/2 right-4 -translate-y-1/2" />}
+                {isLoading && isSubmitting && (
+                  <Spinner className="absolute top-1/2 right-4 -translate-y-1/2" />
+                )}
               </Button>
             </div>
           </div>

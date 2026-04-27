@@ -1,6 +1,4 @@
 import { Star } from 'lucide-react';
-import Link from 'next/link';
-import { id } from 'zod/locales';
 
 type PropsType = {
   id: number;
@@ -21,7 +19,7 @@ export const ProductRating = (props: PropsType) => {
       role="img"
       aria-label={`評価 ${clamped.toFixed(1)} / ${safeMax}`}
     >
-      <Link href={`/products/${id}/reviews`} className="flex">
+      <div className="flex">
         {Array.from({ length: safeMax }, (_, i) => {
           const fillRatio = Math.min(Math.max(clamped - i, 0), 1);
           return (
@@ -48,7 +46,7 @@ export const ProductRating = (props: PropsType) => {
         <span className="text-muted-foreground ml-1 text-sm tabular-nums">
           {clamped.toFixed(1)}
         </span>
-      </Link>
+      </div>
     </div>
   );
 };

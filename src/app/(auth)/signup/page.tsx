@@ -24,11 +24,11 @@ const SignUpPage = () => {
   const router = useRouter();
   const { form, setForm, clearForm } = signupFormStore();
   const methods = useForm<SignupFormType & AddressFormType>({
+    defaultValues: form,
     mode: 'onChange',
     resolver: zodResolver(signupSchema),
-    defaultValues: form,
   });
-  const { handleSubmit, reset } = methods;
+  const { handleSubmit, reset, setValue } = methods;
 
   useEffect(() => {
     reset(form);
@@ -75,6 +75,17 @@ const SignUpPage = () => {
               </FieldGroup>
               <AddressForm />
               <TextField
+                name="phoneNumber"
+                inputMode="numeric"
+                label={words.phoneNumber}
+                maxLength={11}
+                onChange={(e) => {
+                  // 数字以外除去
+                  const value = e.target.value.replace(/\D/g, '').slice(0, 11);
+                  setValue('phoneNumber', value);
+                }}
+              />
+              <TextField
                 name="email"
                 label={words.email}
                 required
@@ -109,13 +120,8 @@ const SignUpPage = () => {
             >
               {buttonMsg.back}
             </Button>
-            <Button
-              type="submit"
-              form="signup-form"
-              className="w-full sm:w-[180px]"
-              variant="secondary"
-            >
-              確認画面に進む
+            <Button type="submit" form="signup-form" className="w-full sm:w-[180px]">
+              {buttonMsg.toConfirm}
             </Button>
           </div>
         </CardFooter>

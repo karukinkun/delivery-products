@@ -4,6 +4,7 @@ const isDev = process.env.NODE_ENV === 'development';
 const apiOrigin = String(process.env.NEXT_PUBLIC_API_ORIGIN);
 const getAddressApiOrigin = String(process.env.NEXT_PUBLIC_GET_ADDRESS_API_ORIGIN);
 const cloudfrontOrigin = String(process.env.NEXT_PUBLIC_CLOUDFRONT_ORIGIN);
+const cognitoApiOrigin = String(process.env.NEXT_PUBLIC_COGNITO_API_ORIGIN);
 
 const cspHeader = `
   default-src 'self';
@@ -11,7 +12,7 @@ const cspHeader = `
   style-src 'self' 'unsafe-inline';
   img-src 'self';
   font-src 'self';
-  connect-src 'self' ${apiOrigin} ${getAddressApiOrigin};
+  connect-src 'self' ${apiOrigin} ${getAddressApiOrigin} ${cognitoApiOrigin};
   object-src 'none';
   base-uri 'self';
   form-action 'self';

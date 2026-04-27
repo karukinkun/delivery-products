@@ -1,54 +1,57 @@
 'use client';
 
+import { ErrorAlert } from '@/components/common/error-alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldDescription, FieldGroup, FieldLegend } from '@/components/ui/field';
 import { Spinner } from '@/components/ui/spinner';
+import { resendSignUpCodeApi, signUpApi } from '@/lib/api/auth';
+import { loadingStore } from '@/lib/store/loadingStore';
 import { signupFormStore } from '@/lib/store/signupFormStore';
-import { authErrorMessage } from '@/lib/utils';
-import { signUp } from 'aws-amplify/auth';
-import { buttonMsg, fetchErrorMsg, pageMsg, words } from 'constants/messages';
-import { AlertCircleIcon } from 'lucide-react';
+import { authErrorMessage, cn, formatPhoneNumber, isAuthError } from '@/lib/utils';
+import { buttonMsg, pageMsg, words } from 'constants/messages';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const SignUpConfirm = () => {
   const router = useRouter();
   const { form } = signupFormStore();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
+  const isLoading = loadingStore((state) => state.isLoading);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!form.email || !form.password) {
+      router.replace('/signup');
+    }
+  }, [form.email, form.password, router]);
 
   const onClick = async () => {
-    setSubmitError(null);
-    setIsSubmitting(true);
+    setFetchError(null);
     try {
-      await signUp({
-        username: form.email,
-        password: form.password,
-        options: {
-          userAttributes: {
-            email: form.email,
-            // TODO: 下記情報はユーザー登録後にPostgreSQLのユーザーテーブルに登録する
-            // name: `${form.lastName} ${form.firstName}`,
-            // gender: form.gender,
-            // birthdate: `${form.year}-${form.month.padStart(2, '0')}-${form.day.padStart(2, '0')}`,
-            // postalCode: form.postalCode,
-            // prefecture: form.prefecture,
-            // address2: form.address2,
-            // address3: form.address3,
-            // address4: form.address4,
-          },
-        },
-      });
+      await signUpApi({ email: form.email, password: form.password });
 
       router.push('/authCode');
     } catch (error) {
       // eslint-disable-next-line no-console -- 例外のスタック追跡用
       console.error(error);
-      setSubmitError(authErrorMessage(error));
-    } finally {
-      setIsSubmitting(false);
+      // メールアドレス登録済みかつ認証コード未認証のユーザーの場合
+      // 認証コード再送信して認証コード入力画面に遷移する
+      if (isAuthError(error, 'UsernameExistsException')) {
+        try {
+          await resendSignUpCodeApi({ email: form.email });
+
+          router.push('/authCode');
+          return;
+        } catch (resendError) {
+          // eslint-disable-next-line no-console -- 例外のスタック追跡用
+          console.error(resendError);
+          setFetchError(authErrorMessage(resendError));
+          return;
+        }
+      } else {
+        setFetchError(authErrorMessage(error));
+      }
     }
   };
 
@@ -91,34 +94,27 @@ const SignUpConfirm = () => {
             <FieldDescription>{form.email}</FieldDescription>
           </Field>
           <Field>
-            <FieldLegend>{words.password}</FieldLegend>
-            <FieldDescription>************</FieldDescription>
+            <FieldLegend>{words.phoneNumber}</FieldLegend>
+            <FieldDescription>{formatPhoneNumber(form.phoneNumber)}</FieldDescription>
           </Field>
         </FieldGroup>
       </CardContent>
       <CardFooter>
         <div className="flex w-full flex-col gap-2">
-          {submitError && (
-            <div className="text-destructive flex gap-2">
-              <AlertCircleIcon />
-              <div>
-                <p role="alert">{fetchErrorMsg.title}</p>
-                <p role="alert">{submitError}</p>
-              </div>
-            </div>
-          )}
+          {fetchError && <ErrorAlert fetchErrorMessage={fetchError} />}
           <div className="flex flex-col gap-2 sm:flex-row">
-            <Button variant="outline" asChild disabled={isSubmitting}>
-              <Link href="/signup">{buttonMsg.back}</Link>
+            <Button variant="outline" type="button" asChild disabled={isLoading}>
+              <Link
+                href="/signup"
+                aria-disabled={isLoading}
+                className={cn(isLoading && 'pointer-events-none opacity-50')}
+              >
+                {buttonMsg.back}
+              </Link>
             </Button>
-            <Button
-              onClick={onClick}
-              form="signup-form"
-              className="relative"
-              disabled={isSubmitting}
-            >
+            <Button type="button" onClick={onClick} className="relative" disabled={isLoading}>
               <span className="px-10">{buttonMsg.register}</span>
-              {isSubmitting && <Spinner className="absolute top-1/2 right-4 -translate-y-1/2" />}
+              {isLoading && <Spinner className="absolute top-1/2 right-4 -translate-y-1/2" />}
             </Button>
           </div>
         </div>

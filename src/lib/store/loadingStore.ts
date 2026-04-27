@@ -1,16 +1,33 @@
 import { create } from 'zustand';
 
-type StoreType = {
+type LoadingStoreType = {
+  loadingCount: number;
   isLoading: boolean;
-  setIsLoading: (isLoading: boolean) => void;
+  startLoading: () => void;
+  stopLoading: () => void;
 };
 
-const loadingStore = create<StoreType>((set) => ({
+export const loadingStore = create<LoadingStoreType>((set) => ({
+  loadingCount: 0,
   isLoading: false,
-  setIsLoading: (isLoading: boolean) =>
-    set({
-      isLoading,
+
+  startLoading: () =>
+    set((state) => {
+      const loadingCount = state.loadingCount + 1;
+
+      return {
+        loadingCount,
+        isLoading: loadingCount > 0,
+      };
+    }),
+
+  stopLoading: () =>
+    set((state) => {
+      const loadingCount = Math.max(0, state.loadingCount - 1);
+
+      return {
+        loadingCount,
+        isLoading: loadingCount > 0,
+      };
     }),
 }));
-
-export default loadingStore;

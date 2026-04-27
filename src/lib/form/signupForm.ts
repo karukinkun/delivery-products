@@ -11,6 +11,7 @@ export const signupDefaultValues: SignupFormType = {
   month: '',
   day: '',
   email: '',
+  phoneNumber: '',
   password: '',
   passwordConfirm: '',
 };
