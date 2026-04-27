@@ -23,7 +23,8 @@ export async function getProductsApi(
 
 export async function getProductDetailApi(id: number): Promise<ProductType> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_ORIGIN}/products/${id}`, {
-    next: { revalidate: 60 }, // 60秒ごとにキャッシュを更新
+    // next: { revalidate: 60 }, // 60秒ごとにキャッシュを更新
+    cache: 'no-store',
   });
 
   if (!res.ok) {
