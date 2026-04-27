@@ -15,6 +15,7 @@ import { dayList, genderOptions, monthList, yearList } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { buttonMsg, pageMsg, words } from 'constants/messages';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 
 const currentYear = new Date().getFullYear();
@@ -27,7 +28,11 @@ const SignUpPage = () => {
     resolver: zodResolver(signupSchema),
     defaultValues: form,
   });
-  const { handleSubmit } = methods;
+  const { handleSubmit, reset } = methods;
+
+  useEffect(() => {
+    reset(form);
+  }, [form, reset]);
 
   const onSubmit: SubmitHandler<SignupFormType & AddressFormType> = (data) => {
     setForm(data); // Zustand にフォーム情報を保存
