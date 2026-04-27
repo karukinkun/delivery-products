@@ -3,6 +3,8 @@ export type ImageType = {
   image_url: string;
 };
 
+// 商品一覧取得API
+// --------------------------------------
 export type ProductType = {
   id: number;
   name: string;

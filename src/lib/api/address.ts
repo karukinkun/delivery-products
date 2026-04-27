@@ -15,7 +15,7 @@ export async function getAddressApi(postalCode: string): Promise<Address | null>
   return apiClient(async () => {
     try {
       const { data } = await axios.get<AddressResponse>(
-        `${process.env.NEXT_PUBLIC_GET_ADDRESS_API_ORIGIN}?zipcode=${postalCode}`,
+        `${process.env.NEXT_PUBLIC_GET_ADDRESS_API_ORIGIN}/api/search?zipcode=${postalCode}`,
       );
 
       return data.results?.[0] ?? null;

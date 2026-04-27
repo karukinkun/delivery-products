@@ -88,12 +88,18 @@ export const prefectureList = [
   { label: '沖縄県', value: '沖縄県' },
 ] as const;
 
+// Cognito 認証系のエラーかどうかを判定する
+export const isAuthError = (error: unknown, name: string) => {
+  return error instanceof Error && error.name === name;
+};
+
 // Cognito 認証系の処理で返りうる例外名に対応したエラーメッセージを返却
 const cognitoExceptionName = (error: unknown): string | undefined => {
   if (typeof error !== 'object' || error === null) return undefined;
   const name = (error as { name?: unknown }).name;
   return typeof name === 'string' ? name : undefined;
 };
+
 export const authErrorMessage = (error: unknown): string => {
   switch (cognitoExceptionName(error)) {
     case 'UsernameExistsException':
@@ -119,4 +125,9 @@ export const authErrorMessage = (error: unknown): string => {
     default:
       return authErrorMsg.unknown;
   }
+};
+
+// 電話番号の形式をハイフンで区切って返却
+export const formatPhoneNumber = (phoneNumber: string) => {
+  return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3, 7)}-${phoneNumber.slice(7)}`;
 };

@@ -5,6 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { FieldSet } from '@/components/ui/field';
 import { InputGroupButton } from '@/components/ui/input-group';
+import { signInApi } from '@/lib/api/auth';
+import { loadingStore } from '@/lib/store/loadingStore';
+import { authErrorMessage } from '@/lib/utils';
 import { EyeOffIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -18,6 +21,8 @@ type FormType = {
 
 const LoginPage = () => {
   const router = useRouter();
+  const isLoading = loadingStore((state) => state.isLoading);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [isShownPassword, setIsShownPassword] = useState<boolean>(false);
   const methods = useForm<FormType>({
     defaultValues: {
@@ -30,9 +35,16 @@ const LoginPage = () => {
   const { handleSubmit } = methods;
 
   const onSubmit: SubmitHandler<FormType> = async (data) => {
-    console.log(data);
-    console.log('ログイン');
-    // router.push('/');
+    setSubmitError(null);
+    try {
+      await signInApi({ email: data.username, password: data.password });
+
+      router.push('/');
+    } catch (error) {
+      // eslint-disable-next-line no-console -- 例外のスタック追跡用
+      console.error(error);
+      setSubmitError(authErrorMessage(error));
+    }
   };
 
   return (

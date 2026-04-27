@@ -18,6 +18,7 @@ export const words = {
   address3: '番地',
   address4: '建物名・部屋番号',
   email: 'メールアドレス',
+  phoneNumber: '電話番号',
   password: 'パスワード',
   passwordConfirm: 'パスワード確認',
 };
@@ -44,9 +45,12 @@ export const pageMsg = {
 };
 
 export const buttonMsg = {
-  back: '前の画面に戻る',
+  back: '前のページに戻る',
+  toConfirm: '確認画面に進む',
+  resendAuthCode: '認証コードの再送信',
   register: '登録する',
   authenticate: 'コードを認証する',
+  toProducts: '商品一覧ページへ',
   toTop: 'トップページへ',
 };
 
@@ -108,6 +112,11 @@ export const validationErrorMsg = {
     required: `${words.email}を入力してください`,
     max: `${words.email}は254文字以内で入力してください`,
     invalid: `${words.email}の形式が正しくありません`,
+  },
+  phoneNumber: {
+    required: `${words.phoneNumber}を入力してください`,
+    max: `${words.phoneNumber}は11文字以内で入力してください`,
+    invalid: `${words.phoneNumber}は数字以外は使用できません`,
   },
   password: {
     required: `${words.password}を入力してください`,
