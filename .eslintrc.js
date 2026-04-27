@@ -1,8 +1,15 @@
 /** @type {import('eslint').Linter.Config} */
 module.exports = {
   root: true,
-
-  ignorePatterns: ['node_modules/', 'dist/', 'build/', '*.min.js', 'coverage/'],
+  ignorePatterns: [
+    'node_modules/',
+    'dist/',
+    'build/',
+    '*.min.js',
+    'coverage/',
+    'next.config.js',
+    '.eslintrc.js',
+  ],
 
   env: {
     browser: true,

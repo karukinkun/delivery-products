@@ -18,7 +18,6 @@ import { useRouter } from 'next/navigation';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 
 const currentYear = new Date().getFullYear();
-// const currentYear = 2020;
 
 const SignUpPage = () => {
   const router = useRouter();

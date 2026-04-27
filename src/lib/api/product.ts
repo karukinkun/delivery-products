@@ -1,31 +1,29 @@
-import { Product } from '@/types/product';
+import { ProductType, ProductsResponse } from '@/types/product';
 
-export async function getProductsApi(fullKeyword: string): Promise<Product[]> {
-  // 検索ワードに含まれている半角 or 全角スペースで分割して、それぞれの単語をリストで取得
-  const keywords = fullKeyword.toLowerCase().trim().split(/\s+/);
-
-  // 1つ目のキーワードを含む商品を取得
-  const res = await fetch(`http://localhost:8000/products`, {
-    cache: 'no-store',
-  });
-
-  if (!res.ok) {
-    throw new Error('商品の取得に失敗しました');
-  }
-
-  const data = await res.json();
-
-  // それぞれのキーワードで商品をさらにフィルタリングして取得
-  const filteredData = data.products.filter((product: Product) =>
-    keywords.every((keyword) => product.title.toLowerCase().includes(keyword)),
+export async function getProductsApi(
+  word: string = '',
+  limit: number = 30,
+  page: number = 1,
+): Promise<ProductsResponse> {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_ORIGIN}/products?word=${word}&limit=${limit}&page=${page}`,
+    {
+      next: { revalidate: 60 }, // 60秒ごとにキャッシュを更新
+    },
   );
 
-  return filteredData;
+  if (!res.ok) {
+    throw new Error('商品の取得に失敗しました');
+  }
+
+  const data = await res.json();
+
+  return data;
 }
 
-export async function getProductDetailApi(id: string): Promise<Product> {
-  const res = await fetch(`https://dummyjson.com/products/${id}`, {
-    cache: 'no-store', // キャッシュせず常に最新のデータを取得
+export async function getProductDetailApi(id: number): Promise<ProductType> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_ORIGIN}/products/${id}`, {
+    next: { revalidate: 60 }, // 60秒ごとにキャッシュを更新
   });
 
   if (!res.ok) {
@@ -33,5 +31,6 @@ export async function getProductDetailApi(id: string): Promise<Product> {
   }
 
   const data = await res.json();
+
   return data;
 }
