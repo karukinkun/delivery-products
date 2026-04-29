@@ -1,33 +1,36 @@
 'use client';
-
-import { schema } from '@/app/(auth)/authCode/schema';
 import { ErrorAlert } from '@/components/common/error-alert';
-import { TextField } from '@/components/common/text-field';
+import { NumericTextField } from '@/components/forms/fields/numeric-text-field';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldSet } from '@/components/ui/field';
 import { Spinner } from '@/components/ui/spinner';
+import { buttonMsg, pageMsg } from '@/constants/messages';
+import { AuthCodeFormType } from '@/forms/auth-code/auth-code-form';
+import { authCodeSchema } from '@/forms/auth-code/auth-code-schema';
 import { autoSignInApi, confirmSignUpApi, resendSignUpCodeApi } from '@/lib/api/auth';
-import { AuthCodeFormType } from '@/lib/form/auth-code-form';
+import { createUserClientApi } from '@/lib/api/users';
 import { loadingStore } from '@/lib/store/loadingStore';
 import { signupFormStore } from '@/lib/store/signupFormStore';
 import { authErrorMessage, cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { buttonMsg, pageMsg } from 'constants/messages';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 
 const AuthCodePage = () => {
+  const isLoading = loadingStore((state) => state.isLoading);
+
+  // パラメーターからfromを取得
   const searchParams = useSearchParams();
   const from = searchParams.get('from');
-  const isLoading = loadingStore((state) => state.isLoading);
+
   const [fetchError, setFetchError] = useState<string | null>(null);
   const router = useRouter();
   const { form, clearForm } = signupFormStore();
   const methods = useForm<AuthCodeFormType>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(authCodeSchema),
     defaultValues: {
       confirmationCode: '',
     },
@@ -35,29 +38,46 @@ const AuthCodePage = () => {
   });
   const {
     handleSubmit,
-    setValue,
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit: SubmitHandler<AuthCodeFormType> = async (data) => {
+  const onSubmit: SubmitHandler<AuthCodeFormType> = async ({ confirmationCode }) => {
     setFetchError(null);
     try {
       const result = await confirmSignUpApi({
         email: form.email,
-        confirmationCode: data.confirmationCode,
+        confirmationCode,
       });
-
-      // ユーザーフォームのZustand（状態管理） 完全にクリア
-      clearForm();
 
       // 認証コードの確認が完了したら自動サインインを行う
       if (result.nextStep.signUpStep === 'COMPLETE_AUTO_SIGN_IN') {
         const signInResult = await autoSignInApi();
+
         if (signInResult.nextStep.signInStep !== 'DONE') {
           router.replace('/login');
           return;
         }
       }
+
+      // Cognito認証済みになった後に、アプリDBへユーザー登録
+      await createUserClientApi({
+        lastName: form.lastName,
+        firstName: form.firstName,
+        gender: form.gender,
+        postalCode: form.postalCode,
+        prefecture: form.prefecture,
+        address2: form.address2,
+        address3: form.address3,
+        address4: form.address4,
+        email: form.email,
+        phoneNumber: form.phoneNumber,
+        birthdate: `${form.year}-${form.month.padStart(2, '0')}-${form.day.padStart(2, '0')}`,
+      });
+
+      // DB登録まで成功した場合
+      // ユーザーフォームのZustand（状態管理） 完全にクリア
+      clearForm();
+
       router.replace('/signupComplete');
       return;
     } catch (error) {
@@ -90,16 +110,7 @@ const AuthCodePage = () => {
           <form noValidate id="authCode-form" onSubmit={handleSubmit(onSubmit)}>
             <FieldSet className="flex flex-row items-center gap-2">
               <Field>
-                <TextField
-                  name="confirmationCode"
-                  inputMode="numeric"
-                  maxLength={7}
-                  onChange={(e) => {
-                    // 数字以外除去
-                    const value = e.target.value.replace(/\D/g, '').slice(0, 7);
-                    setValue('confirmationCode', value);
-                  }}
-                />
+                <NumericTextField name="confirmationCode" maxLength={7} />
               </Field>
               <Field className="w-[290px]">
                 <Button

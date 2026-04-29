@@ -1,19 +1,19 @@
 'use client';
 
-import { signupSchema } from '@/app/(auth)/signup/schema';
-import { RadioField } from '@/components/common/radio-field';
-import { SelectField } from '@/components/common/select-field';
-import { TextField } from '@/components/common/text-field';
-import AddressForm from '@/components/form/AddressForm';
+import AddressForm from '@/components/forms/address-form';
+import { NumericTextField } from '@/components/forms/fields/numeric-text-field';
+import { RadioField } from '@/components/forms/fields/radio-field';
+import { SelectField } from '@/components/forms/fields/select-field';
+import { TextField } from '@/components/forms/fields/text-field';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { FieldGroup, FieldSet } from '@/components/ui/field';
-import { AddressFormType } from '@/lib/form/addressForm';
-import { SignupFormType } from '@/lib/form/signupForm';
+import { buttonMsg, pageMsg, words } from '@/constants/messages';
+import { SignupFormType } from '@/forms/signup/signup-form';
+import { signupSchema } from '@/forms/signup/signup-schema';
 import { signupFormStore } from '@/lib/store/signupFormStore';
 import { dayList, genderOptions, monthList, yearList } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { buttonMsg, pageMsg, words } from 'constants/messages';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
@@ -23,18 +23,19 @@ const currentYear = new Date().getFullYear();
 const SignUpPage = () => {
   const router = useRouter();
   const { form, setForm, clearForm } = signupFormStore();
-  const methods = useForm<SignupFormType & AddressFormType>({
+  const methods = useForm<SignupFormType>({
     defaultValues: form,
-    mode: 'onChange',
+    mode: 'onSubmit',
+    reValidateMode: 'onChange',
     resolver: zodResolver(signupSchema),
   });
-  const { handleSubmit, reset, setValue } = methods;
+  const { handleSubmit, reset } = methods;
 
   useEffect(() => {
     reset(form);
   }, [form, reset]);
 
-  const onSubmit: SubmitHandler<SignupFormType & AddressFormType> = (data) => {
+  const onSubmit: SubmitHandler<SignupFormType> = (data) => {
     setForm(data); // Zustand にフォーム情報を保存
 
     // 会員登録確認ページへ遷移
@@ -74,17 +75,7 @@ const SignUpPage = () => {
                 <SelectField name="day" options={dayList} endLabel={words.day} required />
               </FieldGroup>
               <AddressForm />
-              <TextField
-                name="phoneNumber"
-                inputMode="numeric"
-                label={words.phoneNumber}
-                maxLength={11}
-                onChange={(e) => {
-                  // 数字以外除去
-                  const value = e.target.value.replace(/\D/g, '').slice(0, 11);
-                  setValue('phoneNumber', value);
-                }}
-              />
+              <NumericTextField name="phoneNumber" label={words.phoneNumber} maxLength={11} />
               <TextField
                 name="email"
                 label={words.email}

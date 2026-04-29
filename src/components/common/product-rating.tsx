@@ -1,7 +1,6 @@
 import { Star } from 'lucide-react';
 
 type PropsType = {
-  id: number;
   rating: number;
   className?: string;
   /** 星1個の Tailwind サイズクラス（例: size-4） */

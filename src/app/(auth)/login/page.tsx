@@ -1,17 +1,17 @@
 'use client';
 
 import { ErrorAlert } from '@/components/common/error-alert';
-import { TextField } from '@/components/common/text-field';
+import { TextField } from '@/components/forms/fields/text-field';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { FieldSet } from '@/components/ui/field';
 import { InputGroupButton } from '@/components/ui/input-group';
 import { Spinner } from '@/components/ui/spinner';
+import { authErrorMsg, buttonMsg, words } from '@/constants/messages';
 import { resendSignUpCodeApi, signInApi } from '@/lib/api/auth';
 import { loadingStore } from '@/lib/store/loadingStore';
 import { signupFormStore } from '@/lib/store/signupFormStore';
 import { authErrorMessage, cn } from '@/lib/utils';
-import { authErrorMsg, buttonMsg, words } from 'constants/messages';
 import { EyeOffIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -39,10 +39,10 @@ const LoginPage = () => {
   });
   const { handleSubmit } = methods;
 
-  const onSubmit: SubmitHandler<FormType> = async (data) => {
+  const onSubmit: SubmitHandler<FormType> = async ({ email, password }) => {
     setFetchError(null);
     try {
-      const result = await signInApi({ email: data.email, password: data.password });
+      const result = await signInApi({ email, password });
       switch (result.nextStep.signInStep) {
         case 'DONE':
           router.push('/');
@@ -50,11 +50,11 @@ const LoginPage = () => {
         case 'CONFIRM_SIGN_UP':
           // 5秒後に認証コード再送信して認証コード確認画面へ遷移する
           loadingStore.setState({ isLoading: true });
-          setForm({ email: data.email });
+          setForm({ email });
           setFetchError(authErrorMsg.authenticationRequired);
           setTimeout(async () => {
             try {
-              await resendSignUpCodeApi({ email: data.email });
+              await resendSignUpCodeApi({ email });
               router.push('/authCode?from=login');
               return;
             } catch (resendError) {
