@@ -1,5 +1,5 @@
+import { authErrorMsg, words } from '@/constants/messages';
 import { clsx, type ClassValue } from 'clsx';
-import { authErrorMsg, words } from 'constants/messages';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
@@ -139,3 +139,9 @@ export const authErrorMessage = (error: unknown): string => {
 export const formatPhoneNumber = (phoneNumber: string) => {
   return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3, 7)}-${phoneNumber.slice(7)}`;
 };
+
+// 姓名共通パターン
+// 日本語・英字・数字は許可
+// 一般的な姓名用記号（半角カタカナ・半角全角スペース・半角全角ハイフン・全角ドット）は許可
+export const namePattern =
+  /^[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Latin}0-9.\s\-・\uFF0D\u3000ー]+$/u;

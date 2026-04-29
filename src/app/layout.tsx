@@ -1,4 +1,4 @@
-import ClientLayout from '@/app/ClientLayout';
+import ClientLayout from '@/app/client-layout';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
@@ -14,8 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'オンラインストア',
-  description: 'テスト用のオンラインストアです。',
+  title: 'Naturalis',
+  description:
+    'Natulalisは、ナチュラルデザインが特徴のソファ、ダイニング、キッチン収納、食器、リビング収納、寝具、照明などの生活家具で暮らしを彩るオンラインストアです。',
 };
 
 const RootLayout = ({

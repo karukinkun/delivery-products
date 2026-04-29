@@ -1,22 +1,27 @@
 import { apiClient } from '@/lib/api/client';
-import type {
-  AutoSignInApiResponse,
+import {
   ConfirmSignUpRequest,
+  ResendSignUpCodeRequest,
+  SignInRequest,
+  SignUpRequest,
+} from '@/types/request/auth';
+import {
+  AutoSignInApiResponse,
   ConfirmSignUpResponse,
   GetAccessTokenResponse,
   GetCurrentUserResponse,
-  ResendSignUpCodeRequest,
   ResendSignUpCodeResponse,
-  SignInRequest,
   SignInResponse,
-  SignUpRequest,
   SignUpResponse,
-} from '@/types/auth';
+} from '@/types/response/auth';
 import {
+  associateWebAuthnCredential,
   autoSignIn,
   confirmSignUp,
+  deleteWebAuthnCredential,
   fetchAuthSession,
   getCurrentUser,
+  listWebAuthnCredentials,
   resendSignUpCode,
   signIn,
   signOut,
@@ -102,4 +107,50 @@ export function getAccessTokenApi(): Promise<GetAccessTokenResponse> {
       globalLoading: false,
     },
   );
+}
+
+// TODO: 型定義を別ファイルに移す
+export type PasskeyCredential = {
+  credentialId: string;
+  friendlyCredentialName?: string;
+  relyingPartyId?: string;
+  createdAt?: Date;
+};
+
+export type PasskeyCredentialResponse = PasskeyCredential[];
+
+// TODO: 実装コードが正しいか確認
+export function getPasskeysClientApi(): Promise<PasskeyCredentialResponse> {
+  return apiClient(
+    async () => {
+      const result = await listWebAuthnCredentials();
+      const out: PasskeyCredential[] = [];
+      for (const credential of result.credentials ?? []) {
+        const credentialId = credential.credentialId;
+        if (credentialId === undefined || credentialId === '') {
+          continue;
+        }
+        out.push({
+          credentialId,
+          friendlyCredentialName: credential.friendlyCredentialName,
+          relyingPartyId: credential.relyingPartyId,
+          createdAt: credential.createdAt,
+        });
+      }
+      return out;
+    },
+    {
+      globalLoading: false,
+    },
+  );
+}
+
+export async function registerPasskeyClientApi(): Promise<void> {
+  await associateWebAuthnCredential();
+}
+
+export async function removePasskeyClientApi(credentialId: string): Promise<void> {
+  await deleteWebAuthnCredential({
+    credentialId,
+  });
 }

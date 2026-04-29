@@ -1,4 +1,4 @@
-import { AddToCartResponse, CartItemsResponse } from '@/types/cart';
+import { AddToCartResponse, CartItemsResponse } from '@/types/response/cart';
 
 export async function addToCartApi(
   id: number,

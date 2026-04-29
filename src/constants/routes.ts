@@ -1,0 +1,18 @@
+export const routes = {
+  top: '/',
+  login: '/login',
+  signup: '/signup',
+  signupConfirm: '/signupConfirm',
+  signupComplete: '/signupComplete',
+  authCode: '/authCode',
+  products: '/products',
+  productDetail: (productId: string) => `/products/${productId}`,
+  mypage: '/mypage',
+  mypageCoupons: '/mypage/coupons',
+  mypageUserInfo: '/mypage/user-info',
+  mypageAddressList: '/mypage/address-list',
+  mypageFavoriteProducts: '/mypage/favorite-products',
+  mypagePaymentMethods: '/mypage/payment-methods',
+  mypageOrderHistory: '/mypage/order-history',
+  mypagePasskeyAuthSetup: '/mypage/passkey-auth-setup',
+} as const;

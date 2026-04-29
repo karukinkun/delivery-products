@@ -1,13 +1,11 @@
-import { fetchErrorMsg } from 'constants/messages';
+import { fetchErrorMsg } from '@/constants/messages';
 import { AlertCircleIcon } from 'lucide-react';
 
 type PropsType = {
   fetchErrorMessage: string;
 };
 
-export const ErrorAlert = (props: PropsType) => {
-  const { fetchErrorMessage } = props;
-
+export const ErrorAlert = ({ fetchErrorMessage }: PropsType) => {
   return (
     <div className="text-destructive flex w-full gap-2">
       <AlertCircleIcon />

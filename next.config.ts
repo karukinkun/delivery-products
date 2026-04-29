@@ -1,10 +1,10 @@
 import type { NextConfig } from 'next';
 
 const isDev = process.env.NODE_ENV === 'development';
-const apiOrigin = String(process.env.NEXT_PUBLIC_API_ORIGIN);
-const getAddressApiOrigin = String(process.env.NEXT_PUBLIC_GET_ADDRESS_API_ORIGIN);
-const cloudfrontOrigin = String(process.env.NEXT_PUBLIC_CLOUDFRONT_ORIGIN);
-const cognitoApiOrigin = String(process.env.NEXT_PUBLIC_COGNITO_API_ORIGIN);
+const apiOrigin = process.env.API_ORIGIN ?? '';
+const getAddressApiOrigin = process.env.NEXT_PUBLIC_GET_ADDRESS_API_ORIGIN ?? '';
+const cloudfrontOrigin = process.env.NEXT_PUBLIC_CLOUDFRONT_DOMAIN ?? '';
+const cognitoApiOrigin = process.env.COGNITO_API_ORIGIN ?? '';
 
 const cspHeader = `
   default-src 'self';
@@ -39,9 +39,23 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            // key: 'Content-Security-Policy-Report-Only',
             value: cspHeader.replace(/\s{2,}/g, ' ').trim(),
           },
+          // {
+          //   // CORSを許可するオリジン
+          //   key: 'Access-Control-Allow-Origin',
+          //   value: 'https://sample-prisma-next-app.vercel.app',
+          // },
+          // {
+          //   // 許可するメソッド
+          //   key: 'Access-Control-Allow-Methods',
+          //   value: 'GET,OPTIONS,POST',
+          // },
+          // {
+          //   // 許可するリクエストヘッダ
+          //   key: 'Access-Control-Allow-Headers',
+          //   value: 'Content-Type',
+          // },
         ],
       },
     ];
